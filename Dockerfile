@@ -3,7 +3,6 @@ FROM quay.io/ukhomeofficedigital/alpine:v3.13
 ENV USER user_hocs
 ENV USER_ID 1000
 ENV GROUP group_hocs
-ENV NAME hocs-audit
 ENV JAR_PATH build/libs
 
 USER root
@@ -17,7 +16,7 @@ RUN addgroup -S ${GROUP} && \
     mkdir -p /app && \
     chown -R ${USER}:${GROUP} /app
 
-COPY ${JAR_PATH}/${NAME}*.jar /app
+COPY ${JAR_PATH}/*.jar /app
 
 ADD scripts /app/scripts
 
