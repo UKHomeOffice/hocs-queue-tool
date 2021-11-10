@@ -1,0 +1,34 @@
+sqs-provider: localstack
+sqs-region: eu-west-2
+
+search-queue:
+  endpoint: http://localhost:4576
+  sqs-queue: http://localhost:4576/queue/search-sqs
+
+search-dlq:
+  endpoint: http://localhost:4576
+  sqs-queue: http://localhost:4576/queue/search-dlq
+
+audit-queue:
+  endpoint: http://localhost:4576
+  sqs-queue: http://localhost:4576/queue/audit-sqs
+
+audit-dlq:
+  endpoint: http://localhost:4576
+  sqs-queue: http://localhost:4576/queue/audit-dlq
+
+document-queue:
+  endpoint: http://localhost:4576
+  sqs-queue: http://localhost:4576/queue/document-sqs
+
+document-dlq:
+  endpoint: http://localhost:4576
+  sqs-queue: http://localhost:4576/queue/document-dlq
+
+notify-queue:
+  endpoint: http://localhost:4576
+  sqs-queue: http://localhost:4576/queue/notify-sqs
+
+notify-dlq:
+  endpoint: http://localhost:4576
+  sqs-queue: http://localhost:4576/queue/notify-dlq
