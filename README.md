@@ -6,7 +6,7 @@ A utility to investigate and manage dead letter queues on the hocs platform.
 
 # Running Hocs-Queue-Tool
 
-##Use the deployed instances
+## Use the deployed instances
 
 The tool is deployed to all `cs-`, `wcs-` and `hocs-` namespaces and can be port forwarded to in the normal kubernetes way. It might need to be scaled up first!
 
@@ -14,7 +14,7 @@ The tool is deployed to all `cs-`, `wcs-` and `hocs-` namespaces and can be port
 kubectl port-forward deployment/hocs-queue-tool 8080:8080 -n <<NAMESPACE>>
 ```
 
-##Run from your terminal against Localstack
+## Run from your terminal against Localstack
 
 Start up localstack then start the project using gradlew
 
