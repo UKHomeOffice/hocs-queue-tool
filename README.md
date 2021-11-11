@@ -11,6 +11,8 @@ A utility to investigate and manage dead letter queues on the hocs platform.
 The tool is deployed to all `cs-`, `wcs-` and `hocs-` namespaces and can be port forwarded to in the normal kubernetes way. It might need to be scaled up first!
 
 ```sh
+kubectl scale deployment --replicas=1 hocs-queue-tool -n <<NAMESPACE>>
+
 kubectl port-forward deployment/hocs-queue-tool 8080:8080 -n <<NAMESPACE>>
 ```
 
