@@ -1,0 +1,199 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hocs-queue-tool
+  labels:
+    version: {{.VERSION}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: hocs-queue-tool
+  template:
+    metadata:
+      labels:
+        name: hocs-queue-tool
+        role: hocs-backend
+        version: {{.VERSION}}
+    spec:
+      imagePullSecrets:
+        - name: registry-credentials
+
+      containers:
+        - name: hocs-queue-tool
+          image: quay.io/ukhomeofficedigital/hocs-queue-tool:{{.VERSION}}
+          securityContext:
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - SETUID
+                - SETGID
+          env:
+            - name: JAVA_OPTS
+              value: '-Xms512m -Xmx512m -Dhttps.proxyHost=hocs-outbound-proxy.{{.KUBE_NAMESPACE}}.svc.cluster.local -Dhttps.proxyPort=31290 -Dhttp.nonProxyHosts=*.{{.KUBE_NAMESPACE}}.svc.cluster.local'
+            - name: SERVER_PORT
+              value: '8080'
+            - name: SPRING_PROFILES_ACTIVE
+              value: 'aws'
+            - name: SEARCH_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  key: sqs_queue_url
+            - name: SEARCH_QUEUE_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  key: access_key_id
+            - name: SEARCH_QUEUE_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  key: secret_access_key
+            - name: SEARCH_DLQ_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  key: sqs_dlq_url
+            - name: SEARCH_DLQ_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  key: access_key_id
+            - name: SEARCH_DLQ_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  key: secret_access_key
+            - name: AUDIT_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-audit-sqs
+                  key: sqs_queue_url
+            - name: AUDIT_QUEUE_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-audit-sqs
+                  key: access_key_id
+            - name: AUDIT_QUEUE_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-audit-sqs
+                  key: secret_access_key
+            - name: AUDIT_DLQ_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-audit-sqs
+                  key: sqs_dlq_url
+            - name: AUDIT_DLQ_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-audit-sqs
+                  key: access_key_id
+            - name: AUDIT_DLQ_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-audit-sqs
+                  key: secret_access_key
+            - name: DOCUMENT_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-document-sqs
+                  key: sqs_queue_url
+            - name: DOCUMENT_QUEUE_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-document-sqs
+                  key: access_key_id
+            - name: DOCUMENT_QUEUE_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-document-sqs
+                  key: secret_access_key
+            - name: DOCUMENT_DLQ_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-document-sqs
+                  key: sqs_dlq_url
+            - name: DOCUMENT_DLQ_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-document-sqs
+                  key: access_key_id
+            - name: DOCUMENT_DLQ_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-document-sqs
+                  key: secret_access_key
+            - name: NOTIFY_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-notify-sqs
+                  key: sqs_queue_url
+            - name: NOTIFY_QUEUE_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-notify-sqs
+                  key: access_key_id
+            - name: NOTIFY_QUEUE_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-notify-sqs
+                  key: secret_access_key
+            - name: NOTIFY_DLQ_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-notify-sqs
+                  key: sqs_dlq_url
+            - name: NOTIFY_DLQ_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-notify-sqs
+                  key: access_key_id
+            - name: NOTIFY_DLQ_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-notify-sqs
+                  key: secret_access_key
+          resources:
+            limits:
+              cpu: 200m
+              memory: 512Mi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+          ports:
+            - name: http
+              containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+              httpHeaders:
+                - name: X-probe
+                  value: kubelet
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: http
+              httpHeaders:
+                - name: X-probe
+                  value: kubelet
+            periodSeconds: 2
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: http
+              httpHeaders:
+                - name: X-probe
+                  value: kubelet
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          lifecycle:
+            preStop:
+              exec:
+                command: [ "sh", "-c", "sleep 20" ]

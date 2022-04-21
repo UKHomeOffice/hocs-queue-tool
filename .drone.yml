@@ -50,6 +50,57 @@ steps:
 ---
 kind: pipeline
 type: kubernetes
+name: deploy
+trigger:
+  event:
+    - promote
+
+steps:
+  - name: fetch and checkout
+    image: alpine/git
+    commands:
+      - git fetch --tags
+      - git checkout $${VERSION}
+
+  - name: deploy to not prod
+    image: quay.io/ukhomeofficedigital/kd
+    commands:
+      - cd kube
+      - ./deploy.sh
+    environment:
+      ENVIRONMENT: ${DRONE_DEPLOY_TO}
+      KUBE_TOKEN:
+        from_secret: hocs_queue_tool_${DRONE_DEPLOY_TO/-/_}
+      KUBE_SERVER: https://kube-api-notprod.notprod.acp.homeoffice.gov.uk
+      CLUSTER_NAME: acp-notprod
+    depends_on:
+      - fetch and checkout
+    when:
+      target:
+        exclude:
+          - release
+          - "*-prod"
+
+  - name: deploy to prod
+    image: quay.io/ukhomeofficedigital/kd
+    commands:
+      - cd kube
+      - ./deploy.sh
+    environment:
+      ENVIRONMENT: ${DRONE_DEPLOY_TO}
+      KUBE_TOKEN:
+        from_secret: hocs_queue_tool_${DRONE_DEPLOY_TO/-/_}
+      KUBE_SERVER: https://kube-api-prod.prod.acp.homeoffice.gov.uk
+      CLUSTER_NAME: acp-prod
+    depends_on:
+      - fetch and checkout
+    when:
+      target:
+        include:
+          - "*-prod"
+---
+kind: pipeline
+type: kubernetes
 name: build tag
 trigger:
   event:
