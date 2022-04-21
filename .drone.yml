@@ -2,6 +2,12 @@
 kind: pipeline
 type: kubernetes
 name: build
+trigger:
+  event:
+    - push
+  branch:
+    exclude:
+      - main
 
 services:
   - name: localstack
@@ -12,28 +18,20 @@ services:
 
 steps:
   - name: setup localstack
-    image: quay.io/ukhomeofficedigital/localstack # need curl which is not in alpine
+    image: quay.io/ukhomeofficedigital/localstack
     commands:
       - ./config/localstack/setup-sqs.sh
     depends_on:
       - clone
 
-  - name: build project
-    image: quay.io/ukhomeofficedigital/openjdk11:v11.0.5_10
-    commands:
-      - ./gradlew assemble --no-daemon
-    depends_on:
-      - clone
-
   - name: test project
-    image: quay.io/ukhomeofficedigital/openjdk11:v11.0.5_10
+    image: quay.io/ukhomeofficedigital/hocs-base-image-build:1.0.2
     environment:
       LOCALSTACK_HOST: "localstack"
     commands:
-      - ./gradlew check --no-daemon
+      - ./gradlew clean build --no-daemon
     depends_on:
       - setup localstack
-      - build project
 
   - name: build & push
     image: plugins/docker
@@ -41,39 +39,82 @@ steps:
       registry: quay.io
       repo: quay.io/ukhomeofficedigital/hocs-queue-tool
       tags:
-        - build_${DRONE_BUILD_NUMBER}
         - ${DRONE_COMMIT_SHA}
     environment:
       DOCKER_PASSWORD:
         from_secret: QUAY_ROBOT_TOKEN
       DOCKER_USERNAME: ukhomeofficedigital+hocs_quay_robot
-    when:
-      branch:
-        exclude:
-          - main
     depends_on:
       - test project
 
-  - name: build & push latest
+---
+kind: pipeline
+type: kubernetes
+name: build tag
+trigger:
+  event:
+    - tag
+  branch:
+    - main
+    - support/*
+
+services:
+  - name: localstack
+    image: quay.io/ukhomeofficedigital/localstack
+    environment:
+      SERVICES: sqs, sns
+      DEFAULT_REGION: eu-west-2
+
+steps:
+  - name: setup localstack
+    image: quay.io/ukhomeofficedigital/localstack
+    commands:
+      - ./config/localstack/setup-sqs.sh
+    depends_on:
+      - clone
+
+  - name: test project
+    image: quay.io/ukhomeofficedigital/hocs-base-image-build:1.0.2
+    environment:
+      LOCALSTACK_HOST: "localstack"
+    commands:
+      - ./gradlew clean build --no-daemon
+    depends_on:
+      - setup localstack
+
+  - name: build & push tag main
     image: plugins/docker
     settings:
       registry: quay.io
       repo: quay.io/ukhomeofficedigital/hocs-queue-tool
       tags:
-        - build_${DRONE_BUILD_NUMBER}
+        - ${DRONE_TAG}
         - ${DRONE_COMMIT_SHA}
         - latest
     environment:
       DOCKER_PASSWORD:
         from_secret: QUAY_ROBOT_TOKEN
       DOCKER_USERNAME: ukhomeofficedigital+hocs_quay_robot
-    when:
-      branch:
-        include:
-          - main
     depends_on:
       - test project
+    when:
+      branch:
+        - main
 
-trigger:
-  event:
-    - push
+  - name: build & push tag
+    image: plugins/docker
+    settings:
+      registry: quay.io
+      repo: quay.io/ukhomeofficedigital/hocs-queue-tool
+      tags:
+        - ${DRONE_TAG}
+        - ${DRONE_COMMIT_SHA}
+    environment:
+      DOCKER_PASSWORD:
+        from_secret: QUAY_ROBOT_TOKEN
+      DOCKER_USERNAME: ukhomeofficedigital+hocs_quay_robot
+    depends_on:
+      - test project
+    when:
+      branch:
+        - support/*
