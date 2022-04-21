@@ -1,0 +1,15 @@
+spring:
+  main:
+    banner-mode: off
+
+server:
+  shutdown: graceful
+
+management:
+  endpoints:
+    enabled-by-default: false
+  endpoint:
+    health:
+      enabled: true
+      probes:
+        enabled: true
