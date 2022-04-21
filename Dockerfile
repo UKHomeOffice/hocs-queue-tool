@@ -1,29 +1,17 @@
-FROM quay.io/ukhomeofficedigital/alpine:v3.13
-
-ENV USER user_hocs
-ENV USER_ID 1000
-ENV GROUP group_hocs
-ENV JAR_PATH build/libs
+FROM quay.io/ukhomeofficedigital/hocs-base-image-build as builder
 
 USER root
 
-RUN apk add openjdk11-jre
+COPY . .
+RUN ./gradlew clean assemble --no-daemon
 
-WORKDIR /app
+RUN java -Djarmode=layertools -jar ./build/libs/hocs-queue-tool.jar extract
 
-RUN addgroup -S ${GROUP} && \
-    adduser -S -u ${USER_ID} ${USER} -G ${GROUP} -h /app && \
-    mkdir -p /app && \
-    chown -R ${USER}:${GROUP} /app
+FROM quay.io/ukhomeofficedigital/hocs-base-image
 
-COPY ${JAR_PATH}/*.jar /app
+COPY --from=builder --chown=user_hocs:group_hocs ./scripts/run.sh ./
+COPY --from=builder --chown=user_hocs:group_hocs ./spring-boot-loader/ ./
+COPY --from=builder --chown=user_hocs:group_hocs ./dependencies/ ./
+COPY --from=builder --chown=user_hocs:group_hocs ./application/ ./
 
-ADD scripts /app/scripts
-
-RUN chmod a+x /app/scripts/*
-
-EXPOSE 8080
-
-USER ${USER_ID}
-
-CMD ["sh", "/app/scripts/run.sh"]
+CMD ["sh", "/app/run.sh"]
