@@ -1,1 +1,1 @@
-rootProject.name = "queue"
+rootProject.name = "hocs-queue-tool"
