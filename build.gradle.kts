@@ -17,7 +17,7 @@ repositories {
 dependencies {
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor:2.5.5")
 
-	implementation("org.springframework.boot:spring-boot-starter-webflux:2.5.5")
+	implementation("org.springframework.boot:spring-boot-starter-webflux:2.6.7")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
