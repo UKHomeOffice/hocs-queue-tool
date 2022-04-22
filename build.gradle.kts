@@ -27,7 +27,7 @@ dependencies {
 	testAnnotationProcessor("org.springframework.boot:spring-boot-configuration-processor:2.5.5")
 
 	testImplementation("org.awaitility:awaitility-kotlin:4.1.0")
-	testImplementation("org.springframework.boot:spring-boot-starter-test:2.5.5")
+	testImplementation("org.springframework.boot:spring-boot-starter-test:2.6.7")
 
 }
 
