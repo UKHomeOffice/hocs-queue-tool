@@ -32,3 +32,11 @@ notify-queue:
 notify-dlq:
   endpoint: http://localhost:4576
   sqs-queue: http://localhost:4576/queue/notify-dlq
+
+case-creator-queue:
+  endpoint: http://localhost:4576
+  sqs-queue: http://localhost:4576/queue/case-creator-sqs
+
+case-creator-dlq:
+  endpoint: http://localhost:4576
+  sqs-queue: http://localhost:4576/queue/case-creator-dlq

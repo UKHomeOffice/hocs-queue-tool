@@ -47,6 +47,12 @@ class PrintQueueTest {
   internal lateinit var notifyAwsSqsDlqClient: AmazonSQSAsync
 
   @Autowired
+  internal lateinit var caseCreatorAwsSqsClient: AmazonSQSAsync
+
+  @Autowired
+  internal lateinit var caseCreatorAwsSqsDlqClient: AmazonSQSAsync
+
+  @Autowired
   lateinit var webTestClient: WebTestClient
 
   @Value("\${search-dlq.sqs-queue}")
@@ -61,12 +67,16 @@ class PrintQueueTest {
   @Value("\${notify-dlq.sqs-queue}")
   lateinit var notifyDlqUrl: String
 
+  @Value("\${case-creator-dlq.sqs-queue}")
+  lateinit var caseCreatorDlqUrl: String
+
   @BeforeEach
   fun `purge Queues`() {
     searchAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(searchDlqUrl))
     auditAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(auditDlqUrl))
     documentAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(documentDlqUrl))
     notifyAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(notifyDlqUrl))
+    caseCreatorAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(caseCreatorDlqUrl))
   }
 
 
@@ -123,7 +133,8 @@ class PrintQueueTest {
       Arguments.of(QueuePair(searchAwsSqsClient, "", searchAwsSqsDlqClient, searchDlqUrl), "SEARCH"),
       Arguments.of(QueuePair(auditAwsSqsClient, "", auditAwsSqsDlqClient, auditDlqUrl), "AUDIT"),
       Arguments.of(QueuePair(documentAwsSqsClient, "", documentAwsSqsDlqClient, documentDlqUrl),"DOCUMENT"),
-      Arguments.of(QueuePair(notifyAwsSqsClient, "", notifyAwsSqsDlqClient, notifyDlqUrl), "NOTIFY")
+      Arguments.of(QueuePair(notifyAwsSqsClient, "", notifyAwsSqsDlqClient, notifyDlqUrl), "NOTIFY"),
+      Arguments.of(QueuePair(caseCreatorAwsSqsClient, "", caseCreatorAwsSqsDlqClient, caseCreatorDlqUrl), "CASECREATOR"),
     )
   }
 }

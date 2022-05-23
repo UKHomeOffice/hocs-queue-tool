@@ -29,6 +29,10 @@ class AwsConfiguration(
   @Value("\${notify-queue.secret-access-key}") val notifySecretKey: String,
   @Value("\${notify-dlq.access-key-id}") val notifyDlqAccessKeyId: String,
   @Value("\${notify-dlq.secret-access-key}") val notifyDlqSecretKey: String,
+  @Value("\${case-creator-queue.access-key-id}") val caseCreatorAccessKeyId: String,
+  @Value("\${case-creator-queue.secret-access-key}") val caseCreatorSecretKey: String,
+  @Value("\${case-creator-dlq.access-key-id}") val caseCreatorDlqAccessKeyId: String,
+  @Value("\${case-creator-dlq.secret-access-key}") val caseCreatorDlqSecretKey: String,
   @Value("\${sqs-region}") val region: String
 ) {
 
@@ -98,6 +102,24 @@ class AwsConfiguration(
   @Bean(name = ["notifyAwsSqsDlqClient"])
   fun notifyAwsSqsDlqClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(notifyDlqAccessKeyId, notifyDlqSecretKey)
+    return AmazonSQSAsyncClientBuilder
+      .standard()
+      .withRegion(region)
+      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
+  }
+
+  @Bean(name = ["caseCreatorAwsSqsClient"])
+  fun caseCreatorAwsSqsClient(): AmazonSQSAsync {
+    val credentials: AWSCredentials = BasicAWSCredentials(caseCreatorAccessKeyId, caseCreatorSecretKey)
+    return AmazonSQSAsyncClientBuilder
+      .standard()
+      .withRegion(region)
+      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
+  }
+
+  @Bean(name = ["caseCreatorAwsSqsDlqClient"])
+  fun caseCreatorAwsSqsDlqClient(): AmazonSQSAsync {
+    val credentials: AWSCredentials = BasicAWSCredentials(caseCreatorDlqAccessKeyId, caseCreatorDlqSecretKey)
     return AmazonSQSAsyncClientBuilder
       .standard()
       .withRegion(region)

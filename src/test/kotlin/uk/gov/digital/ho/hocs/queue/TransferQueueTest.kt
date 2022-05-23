@@ -49,6 +49,12 @@ class TransferQueueTest {
   internal lateinit var notifyAwsSqsDlqClient: AmazonSQSAsync
 
   @Autowired
+  internal lateinit var caseCreatorAwsSqsClient: AmazonSQSAsync
+
+  @Autowired
+  internal lateinit var caseCreatorAwsSqsDlqClient: AmazonSQSAsync
+
+  @Autowired
   lateinit var webTestClient: WebTestClient
 
   @Value("\${search-queue.sqs-queue}")
@@ -75,6 +81,12 @@ class TransferQueueTest {
   @Value("\${notify-dlq.sqs-queue}")
   lateinit var notifyDlqUrl: String
 
+  @Value("\${case-creator-queue.sqs-queue}")
+  lateinit var caseCreatorQueueUrl: String
+
+  @Value("\${case-creator-dlq.sqs-queue}")
+  lateinit var caseCreatorDlqUrl: String
+
   @BeforeEach
   fun `purge Queues`() {
     searchAwsSqsClient.purgeQueue(PurgeQueueRequest(searchQueueUrl))
@@ -85,6 +97,8 @@ class TransferQueueTest {
     documentAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(documentDlqUrl))
     notifyAwsSqsClient.purgeQueue(PurgeQueueRequest(notifyQueueUrl))
     notifyAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(notifyDlqUrl))
+    caseCreatorAwsSqsClient.purgeQueue(PurgeQueueRequest(caseCreatorQueueUrl))
+    caseCreatorAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(caseCreatorDlqUrl))
   }
 
 
@@ -144,7 +158,8 @@ class TransferQueueTest {
       Arguments.of(QueuePair(searchAwsSqsClient, searchQueueUrl, searchAwsSqsDlqClient, searchDlqUrl), "SEARCH"),
       Arguments.of(QueuePair(auditAwsSqsClient, auditQueueUrl, auditAwsSqsDlqClient, auditDlqUrl), "AUDIT"),
       Arguments.of(QueuePair(documentAwsSqsClient, documentQueueUrl, documentAwsSqsDlqClient, documentDlqUrl),"DOCUMENT"),
-      Arguments.of(QueuePair(notifyAwsSqsClient, notifyQueueUrl, notifyAwsSqsDlqClient, notifyDlqUrl), "NOTIFY")
+      Arguments.of(QueuePair(notifyAwsSqsClient, notifyQueueUrl, notifyAwsSqsDlqClient, notifyDlqUrl), "NOTIFY"),
+      Arguments.of(QueuePair(caseCreatorAwsSqsClient, caseCreatorQueueUrl, caseCreatorAwsSqsDlqClient, caseCreatorDlqUrl), "CASECREATOR"),
     )
   }
 }

@@ -16,6 +16,8 @@ class QueueHelper(@Qualifier(value = "searchAwsSqsClient") private val searchAws
                   @Qualifier(value = "documentAwsSqsDlqClient") val documentAwsSqsDlqClient: AmazonSQSAsync,
                   @Qualifier(value = "notifyAwsSqsClient") val notifyAwsSqsClient: AmazonSQSAsync,
                   @Qualifier(value = "notifyAwsSqsDlqClient") val notifyAwsSqsDlqClient: AmazonSQSAsync,
+                  @Qualifier(value = "caseCreatorAwsSqsClient") val caseCreatorAwsSqsClient: AmazonSQSAsync,
+                  @Qualifier(value = "caseCreatorAwsSqsDlqClient") val caseCreatorAwsSqsDlqClient: AmazonSQSAsync,
                   @Value("\${search-queue.sqs-queue}") val searchQueueUrl: String,
                   @Value("\${search-dlq.sqs-queue}") val searchDlqUrl: String,
                   @Value("\${audit-queue.sqs-queue}") val auditQueueUrl: String,
@@ -24,14 +26,16 @@ class QueueHelper(@Qualifier(value = "searchAwsSqsClient") private val searchAws
                   @Value("\${document-dlq.sqs-queue}") val documentDlqUrl: String,
                   @Value("\${notify-queue.sqs-queue}") val notifyQueueUrl: String,
                   @Value("\${notify-dlq.sqs-queue}") val notifyDlqUrl: String,
+                  @Value("\${case-creator-queue.sqs-queue}") val caseCreatorQueueUrl: String,
+                  @Value("\${case-creator-dlq.sqs-queue}") val caseCreatorDlqUrl: String
 ) {
-
     fun getQueuePair(client : QueuePairName) : QueuePair {
         return when (client) {
             QueuePairName.SEARCH -> QueuePair(searchAwsSqsClient, searchQueueUrl, searchAwsSqsDlqClient, searchDlqUrl)
             QueuePairName.AUDIT -> QueuePair(auditAwsSqsClient, auditQueueUrl, auditAwsSqsDlqClient, auditDlqUrl)
             QueuePairName.DOCUMENT -> QueuePair(documentAwsSqsClient, documentQueueUrl, documentAwsSqsDlqClient, documentDlqUrl)
             QueuePairName.NOTIFY -> QueuePair(notifyAwsSqsClient, notifyQueueUrl, notifyAwsSqsDlqClient, notifyDlqUrl)
+            QueuePairName.CASECREATOR -> QueuePair(caseCreatorAwsSqsClient, caseCreatorQueueUrl, caseCreatorAwsSqsDlqClient, caseCreatorDlqUrl)
         }
     }
 }
