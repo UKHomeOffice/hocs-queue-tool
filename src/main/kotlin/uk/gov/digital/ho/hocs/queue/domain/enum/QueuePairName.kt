@@ -4,5 +4,6 @@ enum class QueuePairName{
   SEARCH,
   AUDIT,
   DOCUMENT,
-  NOTIFY
+  NOTIFY,
+  CASECREATOR
 }

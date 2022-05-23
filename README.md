@@ -41,7 +41,7 @@ docker-compose up -d
 # Queue Management Endpoints
 
 All endpoints take `?queue` as a required parameter.
-The valid values are `SEARCH, AUDIT, NOTIFY, DOCUMENT`
+The valid values are `SEARCH, AUDIT, NOTIFY, DOCUMENT, CASECREATOR`.
 
 ## Transfer
 `GET /transfer?queue=<<QUEUE>>`

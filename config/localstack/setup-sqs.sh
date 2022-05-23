@@ -22,4 +22,7 @@ aws --endpoint-url=http://localstack:4576 sqs create-queue --queue-name document
 aws --endpoint-url=http://localstack:4576 sqs create-queue --queue-name notify-dlq --attributes '{"VisibilityTimeout":"1"}'
 aws --endpoint-url=http://localstack:4576 sqs create-queue --queue-name notify-sqs --attributes '{"RedrivePolicy": "{\"deadLetterTargetArn\":\"arn:aws:sqs:eu-west-2:000000000000:notify-dlq\",\"maxReceiveCount\":1}"}'
 
+aws --endpoint-url=http://localstack:4576 sqs create-queue --queue-name case-creator-dlq --attributes '{"VisibilityTimeout":"1"}'
+aws --endpoint-url=http://localstack:4576 sqs create-queue --queue-name case-creator-sqs --attributes '{"RedrivePolicy": "{\"deadLetterTargetArn\":\"arn:aws:sqs:eu-west-2:000000000000:case-creator-dlq\",\"maxReceiveCount\":1}"}'
+
 echo Queues are Ready

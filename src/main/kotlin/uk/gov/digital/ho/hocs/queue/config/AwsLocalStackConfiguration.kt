@@ -21,6 +21,8 @@ class AwsLocalStackConfiguration(
   @Value("\${document-dlq.endpoint}") val documentDlqEndpoint: String,
   @Value("\${notify-queue.endpoint}") val notifyEndpoint: String,
   @Value("\${notify-dlq.endpoint}") val notifyDlqEndpoint: String,
+  @Value("\${case-creator-queue.endpoint}") val caseCreatorEndpoint: String,
+  @Value("\${case-creator-dlq.endpoint}") val caseCreatorDlqEndpoint: String,
   @Value("\${sqs-region}") val region: String
 ) {
 
@@ -84,6 +86,22 @@ class AwsLocalStackConfiguration(
   fun notifyAwsSqsDlqClient(): AmazonSQSAsync {
     return AmazonSQSAsyncClientBuilder.standard()
       .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(notifyDlqEndpoint, region))
+      .withCredentials(AWSStaticCredentialsProvider(AnonymousAWSCredentials()))
+      .build()
+  }
+
+  @Bean(name = ["caseCreatorAwsSqsClient"])
+  fun caseCreatorAwsSqsClient(): AmazonSQSAsync {
+    return AmazonSQSAsyncClientBuilder.standard()
+      .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(caseCreatorEndpoint, region))
+      .withCredentials(AWSStaticCredentialsProvider(AnonymousAWSCredentials()))
+      .build()
+  }
+
+  @Bean(name = ["caseCreatorAwsSqsDlqClient"])
+  fun caseCreatorAwsSqsDlqClient(): AmazonSQSAsync {
+    return AmazonSQSAsyncClientBuilder.standard()
+      .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(caseCreatorDlqEndpoint, region))
       .withCredentials(AWSStaticCredentialsProvider(AnonymousAWSCredentials()))
       .build()
   }

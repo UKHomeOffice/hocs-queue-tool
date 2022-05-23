@@ -40,3 +40,13 @@ notify-dlq:
   sqs-queue: ${notify.dlq.queue}
   access-key-id: ${notify.dlq.access.key.id}
   secret-access-key: ${notify.dlq.secret.access.key}
+
+case-creator-queue:
+  sqs-queue: ${case-creator.queue}
+  access-key-id: ${case-creator.queue.access.key.id}
+  secret-access-key: ${case-creator.queue.secret.access.key}
+
+case-creator-dlq:
+  sqs-queue: ${case-creator.dlq.queue}
+  access-key-id: ${case-creator.dlq.access.key.id}
+  secret-access-key: ${case-creator.dlq.secret.access.key}
