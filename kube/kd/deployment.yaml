@@ -156,6 +156,11 @@ spec:
                 secretKeyRef:
                   name: {{.KUBE_NAMESPACE}}-notify-sqs
                   key: secret_access_key
+            - name: CASE_CREATOR_QUEUE
+              valueFrom:
+                secretKeyRef:
+                  name: {{.KUBE_NAMESPACE}}-case-creator-sqs
+                  key: sqs_queue_url
             - name: CASE_CREATOR_QUEUE_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
