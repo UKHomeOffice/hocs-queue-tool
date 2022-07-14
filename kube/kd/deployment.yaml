@@ -36,156 +36,43 @@ spec:
               value: '8080'
             - name: SPRING_PROFILES_ACTIVE
               value: 'aws'
-            - name: SEARCH_QUEUE
+
+            {{ range split .QUEUES "," }}
+            - name: {{upper .}}_QUEUE
               valueFrom:
                 secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: sqs_queue_url
-            - name: SEARCH_QUEUE_ACCESS_KEY_ID
+            - name: {{upper .}}_QUEUE_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: access_key_id
-            - name: SEARCH_QUEUE_SECRET_ACCESS_KEY
+            - name: {{upper .}}_QUEUE_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: secret_access_key
-            - name: SEARCH_DLQ_QUEUE
+            - name: {{upper .}}_DLQ_QUEUE
               valueFrom:
                 secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: sqs_dlq_url
-            - name: SEARCH_DLQ_ACCESS_KEY_ID
+                  optional: true
+            - name: {{upper .}}_DLQ_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: access_key_id
-            - name: SEARCH_DLQ_SECRET_ACCESS_KEY
+                  optional: true
+            - name: {{upper .}}_DLQ_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-search-sqs
+                  name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: secret_access_key
-            - name: AUDIT_QUEUE
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-audit-sqs
-                  key: sqs_queue_url
-            - name: AUDIT_QUEUE_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-audit-sqs
-                  key: access_key_id
-            - name: AUDIT_QUEUE_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-audit-sqs
-                  key: secret_access_key
-            - name: AUDIT_DLQ_QUEUE
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-audit-sqs
-                  key: sqs_dlq_url
-            - name: AUDIT_DLQ_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-audit-sqs
-                  key: access_key_id
-            - name: AUDIT_DLQ_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-audit-sqs
-                  key: secret_access_key
-            - name: DOCUMENT_QUEUE
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-document-sqs
-                  key: sqs_queue_url
-            - name: DOCUMENT_QUEUE_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-document-sqs
-                  key: access_key_id
-            - name: DOCUMENT_QUEUE_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-document-sqs
-                  key: secret_access_key
-            - name: DOCUMENT_DLQ_QUEUE
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-document-sqs
-                  key: sqs_dlq_url
-            - name: DOCUMENT_DLQ_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-document-sqs
-                  key: access_key_id
-            - name: DOCUMENT_DLQ_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-document-sqs
-                  key: secret_access_key
-            - name: NOTIFY_QUEUE
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-notify-sqs
-                  key: sqs_queue_url
-            - name: NOTIFY_QUEUE_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-notify-sqs
-                  key: access_key_id
-            - name: NOTIFY_QUEUE_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-notify-sqs
-                  key: secret_access_key
-            - name: NOTIFY_DLQ_QUEUE
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-notify-sqs
-                  key: sqs_dlq_url
-            - name: NOTIFY_DLQ_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-notify-sqs
-                  key: access_key_id
-            - name: NOTIFY_DLQ_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-notify-sqs
-                  key: secret_access_key
-            - name: CASE_CREATOR_QUEUE
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-case-creator-sqs
-                  key: sqs_queue_url
-            - name: CASE_CREATOR_QUEUE_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-case-creator-sqs
-                  key: access_key_id
-            - name: CASE_CREATOR_QUEUE_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-case-creator-sqs
-                  key: secret_access_key
-            - name: CASE_CREATOR_DLQ_QUEUE
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-case-creator-sqs
-                  key: sqs_dlq_url
-            - name: CASE_CREATOR_DLQ_ACCESS_KEY_ID
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-case-creator-sqs
-                  key: access_key_id
-            - name: CASE_CREATOR_DLQ_SECRET_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: {{.KUBE_NAMESPACE}}-case-creator-sqs
-                  key: secret_access_key
+                  optional: true
+            {{end}}
+
           resources:
             limits:
               cpu: 200m

@@ -8,18 +8,23 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest
 import com.google.gson.Gson
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.stereotype.Service
-import uk.gov.digital.ho.hocs.queue.config.QueueHelper
+import uk.gov.digital.ho.hocs.queue.config.helpers.QueueHelper
 import uk.gov.digital.ho.hocs.queue.domain.enum.QueuePairName
 
 @Service
 class QueueAdminService(
-   private val queueHelper: QueueHelper,
-   private val gson: Gson
+    @Qualifier("queueHelper") private val queueHelper: QueueHelper,
+    private val gson: Gson
 ) {
     /* Transfer the messages one at a time */
     fun transferMessages(name: QueuePairName) {
         with (queueHelper.getQueuePair(name)) {
+            if (dlqClient == null || dlqEndpoint == null) {
+                throw IllegalArgumentException("No DLQ setup for queue $name")
+            }
+
             repeat(getMessageCount(dlqClient, dlqEndpoint)) {
                 dlqClient.receiveOneMessage(dlqEndpoint)?.let { msg ->
                     mainClient.sendMessage(mainEndpoint, msg.body)
@@ -32,15 +37,23 @@ class QueueAdminService(
     /* Remove messages from the DLQ */
     fun purgeMessages(name: QueuePairName) {
         with (queueHelper.getQueuePair(name)) {
+            if (dlqClient == null || dlqEndpoint == null) {
+                throw IllegalArgumentException("No DLQ setup for queue $name")
+            }
+
             dlqClient.purgeQueue(PurgeQueueRequest(dlqEndpoint)).also { log.info("Purged the dead letter queue") }
         }
     }
 
     /* Lists all messages on a dlq without acknowledging them */
-    fun  printMessages(name: QueuePairName, num: Int?) : List<String> {
+    fun printMessages(name: QueuePairName, num: Int?) : List<String> {
         val messages = mutableListOf<String>()
 
         with (queueHelper.getQueuePair(name)) {
+            if (dlqClient == null || dlqEndpoint == null) {
+                throw IllegalArgumentException("No DLQ setup for queue $name")
+            }
+
             val msgCount = getMessageCount(dlqClient, dlqEndpoint)
             repeat(if (msgCount >0) num ?: msgCount else 0) {
                 dlqClient.receiveOneMessage(dlqEndpoint)?.let { msg ->
