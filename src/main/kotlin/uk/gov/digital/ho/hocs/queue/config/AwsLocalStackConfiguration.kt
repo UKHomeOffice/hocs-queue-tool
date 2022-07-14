@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 
 @Configuration
 @ConditionalOnProperty(name = ["sqs-provider"], havingValue = "localstack")
@@ -23,6 +24,7 @@ class AwsLocalStackConfiguration(
   @Value("\${notify-dlq.endpoint}") val notifyDlqEndpoint: String,
   @Value("\${case-creator-queue.endpoint}") val caseCreatorEndpoint: String,
   @Value("\${case-creator-dlq.endpoint}") val caseCreatorDlqEndpoint: String,
+  @Value("\${migration-queue.endpoint}") val migrationEndpoint: String,
   @Value("\${sqs-region}") val region: String
 ) {
 
@@ -105,4 +107,14 @@ class AwsLocalStackConfiguration(
       .withCredentials(AWSStaticCredentialsProvider(AnonymousAWSCredentials()))
       .build()
   }
+
+  @Bean(name = ["migrationAwsSqsClient"])
+  @ConditionalOnProperty(prefix = "migration-queue", name = ["endpoint"])
+  fun migrationAwsSqsClient(): AmazonSQSAsync {
+    return AmazonSQSAsyncClientBuilder.standard()
+      .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(migrationEndpoint, region))
+      .withCredentials(AWSStaticCredentialsProvider(AnonymousAWSCredentials()))
+      .build()
+  }
+
 }

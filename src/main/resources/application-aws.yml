@@ -50,3 +50,8 @@ case-creator-dlq:
   sqs-queue: ${case-creator.dlq.queue}
   access-key-id: ${case-creator.dlq.access.key.id}
   secret-access-key: ${case-creator.dlq.secret.access.key}
+
+migration-queue:
+  sqs-queue: ${migration.queue}
+  access-key-id: ${migration.queue.access.key.id}
+  secret-access-key: ${migration.queue.secret.access.key}

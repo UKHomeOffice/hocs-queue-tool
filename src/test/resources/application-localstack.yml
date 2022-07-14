@@ -42,5 +42,5 @@ case-creator-dlq:
   sqs-queue: http://localhost:4566/000000000000/ukvi-complaint-queue-dlq
 
 migration-queue:
-  endpoint: http://localhost:4566
-  sqs-queue: http://localhost:4566/000000000000/migration-queue
+  endpoint: false
+  sqs-queue: false

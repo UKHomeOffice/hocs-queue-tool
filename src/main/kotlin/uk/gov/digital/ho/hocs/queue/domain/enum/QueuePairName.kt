@@ -1,9 +1,10 @@
 package uk.gov.digital.ho.hocs.queue.domain.enum
 
 enum class QueuePairName{
-  SEARCH,
   AUDIT,
+  CASECREATOR,
   DOCUMENT,
+  MIGRATION,
   NOTIFY,
-  CASECREATOR
+  SEARCH,
 }

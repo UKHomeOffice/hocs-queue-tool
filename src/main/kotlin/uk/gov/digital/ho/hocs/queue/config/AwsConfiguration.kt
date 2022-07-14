@@ -33,6 +33,8 @@ class AwsConfiguration(
   @Value("\${case-creator-queue.secret-access-key}") val caseCreatorSecretKey: String,
   @Value("\${case-creator-dlq.access-key-id}") val caseCreatorDlqAccessKeyId: String,
   @Value("\${case-creator-dlq.secret-access-key}") val caseCreatorDlqSecretKey: String,
+  @Value("\${migration-queue.access-key-id}") val migrationAccessKeyId: String,
+  @Value("\${migration-queue.secret-access-key}") val migrationSecretKey: String,
   @Value("\${sqs-region}") val region: String
 ) {
 
@@ -125,4 +127,15 @@ class AwsConfiguration(
       .withRegion(region)
       .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
   }
+
+  @Bean(name = ["migrationAwsSqsClient"])
+  @ConditionalOnProperty(prefix = "migration-queue", name = ["sqs-queue"])
+  fun migrationAwsSqsClient(): AmazonSQSAsync {
+    val credentials: AWSCredentials = BasicAWSCredentials(migrationAccessKeyId, migrationSecretKey)
+    return AmazonSQSAsyncClientBuilder
+      .standard()
+      .withRegion(region)
+      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
+  }
+
 }
