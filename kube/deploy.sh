@@ -4,7 +4,7 @@ set -euo pipefail
 export KUBE_NAMESPACE=${ENVIRONMENT}
 export VERSION=${VERSION}
 
-QUEUES="audit,case-creator,document,notify,search"
+QUEUES="audit,case-creator,document,notify,search,extracts"
 if [[ ${KUBE_NAMESPACE} == cs-dev ]]; then
   QUEUES+=",case-migrator"
 fi
