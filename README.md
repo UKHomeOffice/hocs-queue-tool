@@ -96,6 +96,18 @@ Prints all, or `count` messages on the dead letter queue while still leaving the
 curl http://localhost:8080/printdlq?queue=AUDIT&count=1
 ```
 
+### Send
+
+`POST /send?queue=<<QUEUE>>` 
+
+Sends request body to the desired queue.
+
+```sh
+curl http://localhost:8080/send?queue=AUDIT \
+  -H "Content-Type: application/json" \
+  -d '{ <<MESSAGE>> }'  
+```
+
 ## Versioning
 
 For versioning this project uses [SemVer](https://semver.org/).
