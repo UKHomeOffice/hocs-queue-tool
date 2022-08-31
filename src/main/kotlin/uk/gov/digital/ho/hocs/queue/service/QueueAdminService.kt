@@ -66,6 +66,12 @@ class QueueAdminService(
         return messages
     }
 
+    fun sendMessage(name: QueuePairName, message: String) : String {
+        with (queueHelper.getQueuePair(name)) {
+            return mainClient.sendMessage(mainEndpoint, message).messageId
+        }
+    }
+
     private fun getMessageCount(amazonSQS: AmazonSQS, dlqUrl : String) =
         amazonSQS.getQueueAttributes(dlqUrl,listOf("ApproximateNumberOfMessages")).attributes["ApproximateNumberOfMessages"]?.toInt() ?: 0
 

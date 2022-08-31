@@ -2,6 +2,8 @@ package uk.gov.digital.ho.hocs.queue.controller
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import uk.gov.digital.ho.hocs.queue.service.QueueAdminService
@@ -23,6 +25,11 @@ class QueueAdminController(private val queueAdminService: QueueAdminService) {
   @GetMapping("/printdlq")
   fun printMessagesFromDeadLetterQueue(@RequestParam(name = "queue") pair : QueuePairName, @RequestParam(name = "count") num: Int?) : ResponseEntity<List<String>> {
     return ResponseEntity.ok(queueAdminService.printMessages(pair, num))
+  }
+
+  @PostMapping("/send")
+  fun sendMessageToMainQueue(@RequestParam(name = "queue") pair : QueuePairName, @RequestBody message: String) : ResponseEntity<String> {
+    return ResponseEntity.ok(queueAdminService.sendMessage(pair, message));
   }
 
 }
