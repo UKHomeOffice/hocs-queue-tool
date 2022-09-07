@@ -109,22 +109,22 @@ abstract class BaseQueueHelper {
     )
   }
 
-  fun putMessageOnDlq(dlqClient: AmazonSQSAsync, dlqUrl: String, msgNumber : Int) {
-    await untilCallTo { getNumberOfMessagesCurrentlyOnDeadLetterQueue(dlqClient, dlqUrl) } matches { it == 0 }
+  fun putMessageOnQueue(queueClient: AmazonSQSAsync, queueUrl: String, msgNumber : Int) {
+    await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(queueClient, queueUrl) } matches { it == 0 }
 
     repeat(msgNumber) {
-      dlqClient.sendMessage(dlqUrl, "{\"content\": \"irrelevant\"}")
+      queueClient.sendMessage(queueUrl, "{\"content\": \"irrelevant\"}")
     }
 
-    await untilCallTo { getNumberOfMessagesCurrentlyOnDeadLetterQueue(dlqClient, dlqUrl) } matches { it == msgNumber }
+    await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(queueClient, queueUrl) } matches { it == msgNumber }
   }
 
-  fun getNumberOfMessagesCurrentlyOnDeadLetterQueue(dlqClient: AmazonSQSAsync, dlqUrl: String): Int? {
-    return getNumberOfMessagesCurrentlyOnEventQueue(dlqClient, dlqUrl)
+  fun getNumberOfMessagesCurrentlyOnQueue(queueClient: AmazonSQSAsync, queueUrl: String): Int? {
+    val queueAttributes = queueClient.getQueueAttributes(queueUrl, listOf(MESSAGE_COUNT_ATTRIBUTE))
+    return queueAttributes.attributes[MESSAGE_COUNT_ATTRIBUTE]?.toInt()
   }
 
-  fun getNumberOfMessagesCurrentlyOnEventQueue(queueClient: AmazonSQSAsync, queueUrl: String): Int? {
-    val queueAttributes = queueClient.getQueueAttributes(queueUrl, listOf("ApproximateNumberOfMessages"))
-    return queueAttributes.attributes["ApproximateNumberOfMessages"]?.toInt()
+  companion object {
+    const val MESSAGE_COUNT_ATTRIBUTE = "ApproximateNumberOfMessages"
   }
 }

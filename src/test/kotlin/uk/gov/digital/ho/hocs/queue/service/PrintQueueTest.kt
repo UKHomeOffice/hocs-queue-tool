@@ -13,12 +13,12 @@ class PrintQueueTest : BaseQueueHelper() {
   @MethodSource("getQueuePairs")
   fun `view 0 message from DLQ`(queuePair : QueuePair, queuePairName : QueuePairName) {
     with (queuePair) {
-      putMessageOnDlq(dlqClient!!, dlqEndpoint!!, 0)
+      putMessageOnQueue(dlqClient!!, dlqEndpoint!!, 0)
       webTestClient.get().uri("/printdlq?queue=$queuePairName")
         .exchange()
         .expectStatus()
         .isOk
-      await untilCallTo { getNumberOfMessagesCurrentlyOnDeadLetterQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
     }
   }
 
@@ -26,12 +26,12 @@ class PrintQueueTest : BaseQueueHelper() {
   @MethodSource("getQueuePairs")
   fun `view 1 message from DLQ`(queuePair : QueuePair, queuePairName : QueuePairName) {
     with (queuePair) {
-      putMessageOnDlq(dlqClient!!, dlqEndpoint!!,1)
+      putMessageOnQueue(dlqClient!!, dlqEndpoint!!,1)
       webTestClient.get().uri("/printdlq?queue=$queuePairName")
         .exchange()
         .expectStatus()
         .isOk
-      await untilCallTo { getNumberOfMessagesCurrentlyOnDeadLetterQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 1 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 1 }
     }
   }
 
@@ -39,12 +39,12 @@ class PrintQueueTest : BaseQueueHelper() {
   @MethodSource("getQueuePairs")
   fun `view 2 messages from DLQ`(queuePair : QueuePair, queuePairName : QueuePairName) {
     with (queuePair) {
-      putMessageOnDlq(dlqClient!!, dlqEndpoint!!,2)
+      putMessageOnQueue(dlqClient!!, dlqEndpoint!!,2)
       webTestClient.get().uri("/printdlq?queue=$queuePairName")
         .exchange()
         .expectStatus()
         .isOk
-      await untilCallTo { getNumberOfMessagesCurrentlyOnDeadLetterQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 2 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 2 }
     }
   }
 

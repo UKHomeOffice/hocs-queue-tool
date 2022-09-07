@@ -73,7 +73,7 @@ class QueueAdminService(
     }
 
     private fun getMessageCount(amazonSQS: AmazonSQS, dlqUrl : String) =
-        amazonSQS.getQueueAttributes(dlqUrl,listOf("ApproximateNumberOfMessages")).attributes["ApproximateNumberOfMessages"]?.toInt() ?: 0
+        amazonSQS.getQueueAttributes(dlqUrl, listOf("ApproximateNumberOfMessages")).attributes["ApproximateNumberOfMessages"]?.toInt() ?: 0
 
     private fun AmazonSQSAsync.receiveOneMessage(dlqEndpoint : String) =
         this.receiveMessage(ReceiveMessageRequest(dlqEndpoint).withMaxNumberOfMessages(1)).messages.firstOrNull()

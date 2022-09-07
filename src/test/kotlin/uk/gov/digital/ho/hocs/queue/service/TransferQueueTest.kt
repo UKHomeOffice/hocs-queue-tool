@@ -16,13 +16,13 @@ class TransferQueueTest : BaseQueueHelper() {
   @MethodSource("getQueuePairs")
   fun `moves 0 message from DLQ to main queue`(queuePair : QueuePair, queuePairName : QueuePairName) {
     with (queuePair) {
-      putMessageOnDlq(dlqClient!!, dlqEndpoint!!,0)
+      putMessageOnQueue(dlqClient!!, dlqEndpoint!!,0)
       webTestClient.get().uri("/transfer?queue=$queuePairName")
         .exchange()
         .expectStatus()
         .isOk
-      await untilCallTo { getNumberOfMessagesCurrentlyOnDeadLetterQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
-      await untilCallTo { getNumberOfMessagesCurrentlyOnEventQueue(mainClient, mainEndpoint) } matches { it == 0 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient, mainEndpoint) } matches { it == 0 }
     }
   }
 
@@ -30,13 +30,13 @@ class TransferQueueTest : BaseQueueHelper() {
   @MethodSource("getQueuePairs")
   fun `moves 1 message from DLQ to main queue`(queuePair : QueuePair, queuePairName : QueuePairName) {
     with (queuePair) {
-      putMessageOnDlq(dlqClient!!, dlqEndpoint!!,1)
+      putMessageOnQueue(dlqClient!!, dlqEndpoint!!,1)
       webTestClient.get().uri("/transfer?queue=$queuePairName")
         .exchange()
         .expectStatus()
         .isOk
-      await untilCallTo { getNumberOfMessagesCurrentlyOnDeadLetterQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
-      await untilCallTo { getNumberOfMessagesCurrentlyOnEventQueue(mainClient, mainEndpoint) } matches { it == 1 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient, mainEndpoint) } matches { it == 1 }
     }
   }
 
@@ -44,13 +44,13 @@ class TransferQueueTest : BaseQueueHelper() {
   @MethodSource("getQueuePairs")
   fun `moves 2 messages from DLQ to main queue`(queuePair : QueuePair, queuePairName : QueuePairName) {
     with (queuePair) {
-      putMessageOnDlq(dlqClient!!, dlqEndpoint!!,2)
+      putMessageOnQueue(dlqClient!!, dlqEndpoint!!,2)
       webTestClient.get().uri("/transfer?queue=$queuePairName")
         .exchange()
         .expectStatus()
         .isOk
-      await untilCallTo { getNumberOfMessagesCurrentlyOnDeadLetterQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
-      await untilCallTo { getNumberOfMessagesCurrentlyOnEventQueue(mainClient, mainEndpoint) } matches { it == 2 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient, mainEndpoint) } matches { it == 2 }
     }
   }
 
