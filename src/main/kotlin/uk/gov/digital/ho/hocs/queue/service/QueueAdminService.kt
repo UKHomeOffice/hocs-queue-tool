@@ -3,6 +3,7 @@ package uk.gov.digital.ho.hocs.queue.service
 import com.amazonaws.services.sqs.AmazonSQS
 import com.amazonaws.services.sqs.AmazonSQSAsync
 import com.amazonaws.services.sqs.model.DeleteMessageRequest
+import com.amazonaws.services.sqs.model.GetQueueAttributesRequest
 import com.amazonaws.services.sqs.model.PurgeQueueRequest
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest
 import com.google.gson.Gson
@@ -69,6 +70,19 @@ class QueueAdminService(
     fun sendMessage(name: QueuePairName, message: String) : String {
         with (queueHelper.getQueuePair(name)) {
             return mainClient.sendMessage(mainEndpoint, message).messageId
+        }
+    }
+
+    fun printAttributes(name: QueuePairName, dlq: Boolean) : Map<String, String> {
+        with (queueHelper.getQueuePair(name)) {
+            if (dlq) {
+                if (dlqClient == null || dlqEndpoint == null) {
+                    throw IllegalArgumentException("No DLQ setup for queue $name")
+                }
+                return dlqClient.getQueueAttributes(GetQueueAttributesRequest(dlqEndpoint, listOf("All"))).attributes
+            } else {
+                return mainClient.getQueueAttributes(GetQueueAttributesRequest(mainEndpoint, listOf("All"))).attributes
+            }
         }
     }
 

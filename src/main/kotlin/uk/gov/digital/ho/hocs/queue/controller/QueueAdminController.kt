@@ -32,4 +32,10 @@ class QueueAdminController(private val queueAdminService: QueueAdminService) {
     return ResponseEntity.ok(queueAdminService.sendMessage(pair, message));
   }
 
+  @GetMapping("/attributes")
+  fun printAttributesOfQueue(@RequestParam(name = "queue") pair : QueuePairName,
+                             @RequestParam(name = "dlq", defaultValue = false.toString()) dlq : Boolean) : ResponseEntity<Map<String, String>> {
+    return ResponseEntity.ok(queueAdminService.printAttributes(pair, dlq));
+  }
+
 }
