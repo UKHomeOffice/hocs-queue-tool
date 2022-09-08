@@ -21,5 +21,6 @@ export KUBE_CERTIFICATE_AUTHORITY="https://raw.githubusercontent.com/UKHomeOffic
 
 cd kd
 
-kd --timeout 10m --allow-missing=true \
+kd --timeout 10m \
+    --allow-missing=true \
     -f deployment.yaml \
