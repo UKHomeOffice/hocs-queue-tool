@@ -29,11 +29,6 @@ class QueueHelperTest {
         assertDoesNotThrow { queueHelper.getQueuePair(queuePair) }
     }
 
-    @Test
-    fun `get migration queue pair throws without property definition`() {
-        assertThrows<IllegalArgumentException> { queueHelper.getQueuePair(QueuePairName.MIGRATION) }
-    }
-
     fun getQueuePairNames() : Stream<Arguments> {
         return Stream.of(
             Arguments.of(QueuePairName.SEARCH),
