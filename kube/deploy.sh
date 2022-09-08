@@ -7,6 +7,7 @@ export VERSION=${VERSION}
 QUEUES="audit,case-creator,document,notify,search,extracts"
 if [[ ${KUBE_NAMESPACE} == cs-dev ]]; then
   QUEUES+=",case-migrator"
+  export MIGRATION_QUEUE_ENABLED='true'
 fi
 export QUEUES=${QUEUES}
 
@@ -20,5 +21,5 @@ export KUBE_CERTIFICATE_AUTHORITY="https://raw.githubusercontent.com/UKHomeOffic
 
 cd kd
 
-kd --timeout 10m \
+kd --timeout 10m --allow-missing=true \
     -f deployment.yaml \
