@@ -38,40 +38,42 @@ spec:
               value: 'aws'
 
             {{ range split .QUEUES "," }}
-            - name: {{upper .}}_QUEUE
+            - name: {{upper . | replace "-" "_"}}_QUEUE
               valueFrom:
                 secretKeyRef:
                   name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: sqs_queue_url
-            - name: {{upper .}}_QUEUE_ACCESS_KEY_ID
+            - name: {{upper . | replace "-" "_"}}_QUEUE_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
                   name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: access_key_id
-            - name: {{upper .}}_QUEUE_SECRET_ACCESS_KEY
+            - name: {{upper . | replace "-" "_"}}_QUEUE_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: secret_access_key
-            - name: {{upper .}}_DLQ_QUEUE
+            - name: {{upper . | replace "-" "_"}}_DLQ_QUEUE
               valueFrom:
                 secretKeyRef:
                   name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: sqs_dlq_url
                   optional: true
-            - name: {{upper .}}_DLQ_ACCESS_KEY_ID
+            - name: {{upper . | replace "-" "_"}}_DLQ_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:
                   name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: access_key_id
                   optional: true
-            - name: {{upper .}}_DLQ_SECRET_ACCESS_KEY
+            - name: {{upper . | replace "-" "_"}}_DLQ_SECRET_ACCESS_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{$.KUBE_NAMESPACE}}-{{lower .}}-sqs
                   key: secret_access_key
                   optional: true
             {{end}}
+            - name: MIGRATION_QUEUE_ENABLED
+              value: {{.MIGRATION_QUEUE_ENABLED}}
 
           resources:
             limits:

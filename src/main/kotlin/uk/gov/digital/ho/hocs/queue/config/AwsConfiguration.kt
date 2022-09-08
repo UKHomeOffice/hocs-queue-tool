@@ -129,7 +129,7 @@ class AwsConfiguration(
   }
 
   @Bean(name = ["migrationAwsSqsClient"])
-  @ConditionalOnProperty(prefix = "migration-queue", name = ["sqs-queue"])
+  @ConditionalOnProperty(prefix = "migration-queue", name = ["enabled"], havingValue = true.toString())
   fun migrationAwsSqsClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(migrationAccessKeyId, migrationSecretKey)
     return AmazonSQSAsyncClientBuilder
