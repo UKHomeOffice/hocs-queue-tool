@@ -1,0 +1,11 @@
+---
+app:
+  queues:
+    - 'audit'
+    - 'case-creator'
+    - 'document'
+    - 'notify'
+    - 'search'
+    - 'extracts'
+    - 'case-migrator'
+  migrationQueueEnabled: 'true'
