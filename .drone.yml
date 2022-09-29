@@ -111,6 +111,7 @@ steps:
         from_secret: cs_notprod
     commands:
       - ./ci/helm/helm-deploy.sh --set version=${VERSION} --values ./helm/values-notprod.yaml --values ./helm/values-demo.yaml
+lm/helm-deploy.sh --values ./helm/values-notprod.yaml --values ./helm/values-demo.yaml
     depends_on:
       - checkout
     when:
