@@ -44,6 +44,8 @@ $ docker-compose -f ./ci/docker-compose.yml stop
 
 ## Running in an IDE
 
+> Ensure you have the Kotlin Plugin installed within your IDE ([link](https://plugins.jetbrains.com/plugin/6954-kotlin)).
+
 If you are using an IDE, such as IntelliJ, this service can be started by running the ```QueueToolApplication``` main class.
 The service can then be accessed at ```http://localhost:8080```.
 
@@ -106,6 +108,16 @@ Sends request body to the desired queue.
 curl http://localhost:8080/send?queue=AUDIT \
   -H "Content-Type: application/json" \
   -d '{ <<MESSAGE>> }'  
+```
+
+### Attributes
+
+`GET /attributes?queue=<<QUEUE>>&dlq=<<BOOL>>`
+
+Returns the current attributes for the desired queue.
+
+```sh
+curl http://localhost:8080/attributes?queue=AUDIT&dlq=true 
 ```
 
 ## Versioning
