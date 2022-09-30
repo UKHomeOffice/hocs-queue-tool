@@ -28,7 +28,7 @@ steps:
         from_secret: cs_notprod
       VERSION: ${DRONE_TAG}
     commands:
-      - ./ci/helm/helm-deploy.sh --set version=${VERSION} --values ./helm/values-notprod.yaml --values ./helm/values-dev.yaml
+      - ./ci/helm/helm-deploy.sh --set version=${DRONE_TAG} --values ./helm/values-notprod.yaml --values ./helm/values-dev.yaml
     depends_on:
       - checkout
 
@@ -111,7 +111,6 @@ steps:
         from_secret: cs_notprod
     commands:
       - ./ci/helm/helm-deploy.sh --set version=${VERSION} --values ./helm/values-notprod.yaml --values ./helm/values-demo.yaml
-lm/helm-deploy.sh --values ./helm/values-notprod.yaml --values ./helm/values-demo.yaml
     depends_on:
       - checkout
     when:
