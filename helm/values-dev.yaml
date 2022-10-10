@@ -1,11 +1,14 @@
 ---
-app:
-  queues:
-    - 'audit'
-    - 'case-creator'
-    - 'document'
-    - 'notify'
-    - 'search'
-    - 'extracts'
-    - 'case-migrator'
-  migrationQueueEnabled: 'true'
+hocs-generic-service:
+
+  app:
+    env:
+      queues:
+        - 'audit'
+        - 'case-creator'
+        - 'document'
+        - 'notify'
+        - 'search'
+        - 'extracts'
+        - 'case-migrator'
+      migrationQueueEnabled: 'true'

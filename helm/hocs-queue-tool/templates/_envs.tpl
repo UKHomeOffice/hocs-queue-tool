@@ -1,13 +1,13 @@
 {{- define "deployment.envs" }}
 - name: JAVA_OPTS
-  value: '{{ tpl .Values.app.javaOpts . }}'
+  value: '{{ tpl .Values.app.env.javaOpts . }}'
 - name: SERVER_PORT
-  value: '{{ .Values.app.port }}'
+  value: '{{ .Values.app.env.port }}'
 - name: SPRING_PROFILES_ACTIVE
-  value: '{{ tpl .Values.app.springProfiles . }}'
+  value: '{{ tpl .Values.app.env.springProfiles . }}'
 - name: MIGRATION_QUEUE_ENABLED
-  value: '{{ .Values.app.migrationQueueEnabled }}'
-{{- range .Values.app.queues }}
+  value: '{{ .Values.app.env.migrationQueueEnabled }}'
+{{- range .Values.app.env.queues }}
 - name: {{. | title | replace "-" "_" | upper }}_QUEUE
   valueFrom:
     secretKeyRef:
