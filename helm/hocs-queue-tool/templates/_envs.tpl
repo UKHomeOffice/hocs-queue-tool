@@ -2,7 +2,7 @@
 - name: JAVA_OPTS
   value: '{{ tpl .Values.app.env.javaOpts . }}'
 - name: SERVER_PORT
-  value: '{{ .Values.app.env.port }}'
+  value: '{{ include "hocs-app.port" . }}'
 - name: SPRING_PROFILES_ACTIVE
   value: '{{ tpl .Values.app.env.springProfiles . }}'
 - name: MIGRATION_QUEUE_ENABLED
