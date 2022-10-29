@@ -109,7 +109,6 @@ class AwsLocalStackConfiguration(
   }
 
   @Bean(name = ["migrationAwsSqsClient"])
-  @ConditionalOnProperty(prefix = "migration-queue", name = ["enabled"], havingValue = true.toString(), matchIfMissing = true)
   fun migrationAwsSqsClient(): AmazonSQSAsync {
     return AmazonSQSAsyncClientBuilder.standard()
       .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(migrationEndpoint, region))
