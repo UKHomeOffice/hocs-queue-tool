@@ -19,7 +19,7 @@ class QueueHelper(@Qualifier(value = "searchAwsSqsClient") private val searchAws
                   @Qualifier(value = "notifyAwsSqsDlqClient") private val notifyAwsSqsDlqClient: AmazonSQSAsync,
                   @Qualifier(value = "caseCreatorAwsSqsClient") private val caseCreatorAwsSqsClient: AmazonSQSAsync,
                   @Qualifier(value = "caseCreatorAwsSqsDlqClient") private val caseCreatorAwsSqsDlqClient: AmazonSQSAsync,
-                  @Qualifier(value = "migrationAwsSqsClient") private val migrationAwsSqsClient: AmazonSQSAsync?,
+                  @Qualifier(value = "migrationAwsSqsClient") private val migrationAwsSqsClient: AmazonSQSAsync,
                   @Value("\${search-queue.sqs-queue}") private val searchQueueUrl: String,
                   @Value("\${search-dlq.sqs-queue}") private val searchDlqUrl: String,
                   @Value("\${audit-queue.sqs-queue}") private val auditQueueUrl: String,
@@ -40,13 +40,7 @@ class QueueHelper(@Qualifier(value = "searchAwsSqsClient") private val searchAws
             QueuePairName.DOCUMENT -> QueuePair(documentAwsSqsClient, documentQueueUrl, documentAwsSqsDlqClient, documentDlqUrl)
             QueuePairName.NOTIFY -> QueuePair(notifyAwsSqsClient, notifyQueueUrl, notifyAwsSqsDlqClient, notifyDlqUrl)
             QueuePairName.CASECREATOR -> QueuePair(caseCreatorAwsSqsClient, caseCreatorQueueUrl, caseCreatorAwsSqsDlqClient, caseCreatorDlqUrl)
-            QueuePairName.MIGRATION -> {
-                if (migrationAwsSqsClient != null) {
-                    return QueuePair(migrationAwsSqsClient, migrationQueueUrl, null, null)
-                }
-                throw IllegalArgumentException("Queue doesn't have a pair in this configuration.")
-            }
+            QueuePairName.MIGRATION -> QueuePair(migrationAwsSqsClient, migrationQueueUrl, null, null)
         }
     }
-
 }

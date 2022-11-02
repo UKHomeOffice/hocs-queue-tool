@@ -36,6 +36,7 @@ class QueueHelperTest {
             Arguments.of(QueuePairName.DOCUMENT),
             Arguments.of(QueuePairName.NOTIFY),
             Arguments.of(QueuePairName.CASECREATOR),
+            Arguments.of(QueuePairName.MIGRATION)
         )
     }
 
