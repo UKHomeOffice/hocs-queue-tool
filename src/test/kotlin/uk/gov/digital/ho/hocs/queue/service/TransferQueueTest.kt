@@ -22,7 +22,7 @@ class TransferQueueTest : BaseQueueHelper() {
         .expectStatus()
         .isOk
       await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
-      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient!!, mainEndpoint) } matches { it == 0 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient!!, mainEndpoint!!) } matches { it == 0 }
     }
   }
 
@@ -36,7 +36,7 @@ class TransferQueueTest : BaseQueueHelper() {
         .expectStatus()
         .isOk
       await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
-      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient!!, mainEndpoint) } matches { it == 1 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient!!, mainEndpoint!!) } matches { it == 1 }
     }
   }
 
@@ -50,7 +50,7 @@ class TransferQueueTest : BaseQueueHelper() {
         .expectStatus()
         .isOk
       await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
-      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient!!, mainEndpoint) } matches { it == 2 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient!!, mainEndpoint!!) } matches { it == 2 }
     }
   }
 

@@ -24,7 +24,7 @@ class SendQueueTest : BaseQueueHelper() {
         .expectStatus()
         .isOk
 
-      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient!!, mainEndpoint) } matches { it == 1 }
+      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient!!, mainEndpoint!!) } matches { it == 1 }
     }
   }
 
