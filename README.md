@@ -61,13 +61,13 @@ The tool is deployed to all `cs-`, `wcs-` and `hocs-` namespaces and can be port
 ```sh
 kubectl scale deployment --replicas=1 hocs-queue-tool -n <<NAMESPACE>>
 
-kubectl port-forward deployment/hocs-queue-tool 8080:8080 -n <<NAMESPACE>>
+kubectl port-forward deployment/hocs-queue-tool 10443:10443 -n <<NAMESPACE>>
 ```
 
 ## Queue Management Endpoints
 
 All endpoints take `?queue` as a required parameter.
-The valid values are `SEARCH, AUDIT, NOTIFY, DOCUMENT, CASECREATOR`.
+The valid values are `SEARCH, AUDIT, NOTIFY, DOCUMENT, CASECREATOR, MIGRATION`.
 
 ### Transfer
 `GET /transfer?queue=<<QUEUE>>`
@@ -75,7 +75,7 @@ The valid values are `SEARCH, AUDIT, NOTIFY, DOCUMENT, CASECREATOR`.
 Moves all messages from the dead letter queue onto the main queue.
 
 ```sh
-curl http://localhost:8080/transfer?queue=AUDIT
+curl http://localhost:10443/transfer?queue=AUDIT
 ```
 
 ### Purge
@@ -85,7 +85,7 @@ curl http://localhost:8080/transfer?queue=AUDIT
 Deletes all messages on the dead letter queue. To be used when the message can never be processed successfully.
 
 ```sh
-curl http://localhost:8080/purgedlq?queue=AUDIT
+curl http://localhost:10443/purgedlq?queue=AUDIT
 ```
 
 ### Print
@@ -95,7 +95,7 @@ curl http://localhost:8080/purgedlq?queue=AUDIT
 Prints all, or `count` messages on the dead letter queue while still leaving them on the dead letter queue. To be used to inspect a small number of messages.
 
 ```sh
-curl http://localhost:8080/printdlq?queue=AUDIT&count=1
+curl http://localhost:10443/printdlq?queue=AUDIT&count=1
 ```
 
 ### Send
@@ -105,7 +105,7 @@ curl http://localhost:8080/printdlq?queue=AUDIT&count=1
 Sends request body to the desired queue.
 
 ```sh
-curl http://localhost:8080/send?queue=AUDIT \
+curl http://localhost:10443/send?queue=AUDIT \
   -H "Content-Type: application/json" \
   -d '{ <<MESSAGE>> }'  
 ```
@@ -117,7 +117,7 @@ curl http://localhost:8080/send?queue=AUDIT \
 Returns the current attributes for the desired queue.
 
 ```sh
-curl http://localhost:8080/attributes?queue=AUDIT&dlq=true 
+curl http://localhost:10443/attributes?queue=AUDIT&dlq=true 
 ```
 
 ## Versioning
