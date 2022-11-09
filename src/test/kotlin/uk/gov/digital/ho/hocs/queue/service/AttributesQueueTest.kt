@@ -15,7 +15,7 @@ class AttributesQueueTest : BaseQueueHelper() {
   @MethodSource("getQueuePairs")
   fun `view attributes of main queues`(queuePair : QueuePair, queuePairName : QueuePairName) {
     with (queuePair) {
-      putMessageOnQueue(mainClient, mainEndpoint, 2)
+      putMessageOnQueue(mainClient!!, mainEndpoint, 2)
 
       val response = webTestClient.get().uri("/attributes?queue=$queuePairName")
         .exchange();
