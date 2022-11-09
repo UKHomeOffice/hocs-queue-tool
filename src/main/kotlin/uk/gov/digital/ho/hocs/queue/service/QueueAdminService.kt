@@ -22,6 +22,9 @@ class QueueAdminService(
     /* Transfer the messages one at a time */
     fun transferMessages(name: QueuePairName) {
         with (queueHelper.getQueuePair(name)) {
+            if (mainClient == null || mainEndpoint == null) {
+                throw IllegalArgumentException("No Main setup for queue $name")
+            }
             if (dlqClient == null || dlqEndpoint == null) {
                 throw IllegalArgumentException("No DLQ setup for queue $name")
             }
@@ -38,6 +41,9 @@ class QueueAdminService(
     /* Remove messages from the DLQ */
     fun purgeMessages(name: QueuePairName) {
         with (queueHelper.getQueuePair(name)) {
+            if (mainClient == null || mainEndpoint == null) {
+                throw IllegalArgumentException("No Main setup for queue $name")
+            }
             if (dlqClient == null || dlqEndpoint == null) {
                 throw IllegalArgumentException("No DLQ setup for queue $name")
             }
@@ -51,6 +57,9 @@ class QueueAdminService(
         val messages = mutableListOf<String>()
 
         with (queueHelper.getQueuePair(name)) {
+            if (mainClient == null || mainEndpoint == null) {
+                throw IllegalArgumentException("No Main setup for queue $name")
+            }
             if (dlqClient == null || dlqEndpoint == null) {
                 throw IllegalArgumentException("No DLQ setup for queue $name")
             }
@@ -69,6 +78,9 @@ class QueueAdminService(
 
     fun sendMessage(name: QueuePairName, message: String) : String {
         with (queueHelper.getQueuePair(name)) {
+            if (mainClient == null || mainEndpoint == null) {
+                throw IllegalArgumentException("No Main setup for queue $name")
+            }
             return mainClient.sendMessage(mainEndpoint, message).messageId
         }
     }
@@ -81,6 +93,9 @@ class QueueAdminService(
                 }
                 return dlqClient.getQueueAttributes(GetQueueAttributesRequest(dlqEndpoint, listOf("All"))).attributes
             } else {
+                if (mainClient == null || mainEndpoint == null) {
+                    throw IllegalArgumentException("No Main setup for queue $name")
+                }
                 return mainClient.getQueueAttributes(GetQueueAttributesRequest(mainEndpoint, listOf("All"))).attributes
             }
         }

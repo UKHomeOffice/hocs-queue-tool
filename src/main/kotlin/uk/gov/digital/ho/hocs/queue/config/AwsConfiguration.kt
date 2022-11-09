@@ -39,6 +39,7 @@ class AwsConfiguration(
 ) {
 
   @Bean(name = ["searchAwsSqsClient"])
+  @ConditionalOnProperty(prefix = "search-queue", name = ["sqs-queue"])
   fun searchAwsSqsClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(searchAccessKeyId, searchSecretKey)
     return AmazonSQSAsyncClientBuilder
@@ -48,6 +49,7 @@ class AwsConfiguration(
   }
 
   @Bean(name = ["searchAwsSqsDlqClient"])
+  @ConditionalOnProperty(prefix = "search-dlq", name = ["sqs-queue"])
   fun searchAwsSqsDlqClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(searchDlqAccessKeyId, searchDlqSecretKey)
     return AmazonSQSAsyncClientBuilder
@@ -57,6 +59,7 @@ class AwsConfiguration(
   }
 
   @Bean(name = ["auditAwsSqsClient"])
+  @ConditionalOnProperty(prefix = "audit-queue", name = ["sqs-queue"])
   fun auditAwsSqsClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(auditAccessKeyId, auditSecretKey)
     return AmazonSQSAsyncClientBuilder
@@ -66,6 +69,7 @@ class AwsConfiguration(
   }
 
   @Bean(name = ["auditAwsSqsDlqClient"])
+  @ConditionalOnProperty(prefix = "audit-dlq", name = ["sqs-queue"])
   fun auditAwsSqsDlqClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(auditDlqAccessKeyId, auditDlqSecretKey)
     return AmazonSQSAsyncClientBuilder
@@ -75,6 +79,7 @@ class AwsConfiguration(
   }
 
   @Bean(name = ["documentAwsSqsClient"])
+  @ConditionalOnProperty(prefix = "document-queue", name = ["sqs-queue"])
   fun documentAwsSqsClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(documentAccessKeyId, documentSecretKey)
     return AmazonSQSAsyncClientBuilder
@@ -84,6 +89,7 @@ class AwsConfiguration(
   }
 
   @Bean(name = ["documentAwsSqsDlqClient"])
+  @ConditionalOnProperty(prefix = "document-dlq", name = ["sqs-queue"])
   fun documentAwsSqsDlqClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(documentDlqAccessKeyId, documentDlqSecretKey)
     return AmazonSQSAsyncClientBuilder
@@ -93,6 +99,7 @@ class AwsConfiguration(
   }
 
   @Bean(name = ["notifyAwsSqsClient"])
+  @ConditionalOnProperty(prefix = "notify-queue", name = ["sqs-queue"])
   fun notifyAwsSqsClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(notifyAccessKeyId, notifySecretKey)
     return AmazonSQSAsyncClientBuilder
@@ -102,6 +109,7 @@ class AwsConfiguration(
   }
 
   @Bean(name = ["notifyAwsSqsDlqClient"])
+  @ConditionalOnProperty(prefix = "notify-dlq", name = ["sqs-queue"])
   fun notifyAwsSqsDlqClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(notifyDlqAccessKeyId, notifyDlqSecretKey)
     return AmazonSQSAsyncClientBuilder
@@ -111,6 +119,7 @@ class AwsConfiguration(
   }
 
   @Bean(name = ["caseCreatorAwsSqsClient"])
+  @ConditionalOnProperty(prefix = "case-creator-queue", name = ["sqs-queue"])
   fun caseCreatorAwsSqsClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(caseCreatorAccessKeyId, caseCreatorSecretKey)
     return AmazonSQSAsyncClientBuilder
@@ -120,6 +129,7 @@ class AwsConfiguration(
   }
 
   @Bean(name = ["caseCreatorAwsSqsDlqClient"])
+  @ConditionalOnProperty(prefix = "case-creator-dlq", name = ["sqs-queue"])
   fun caseCreatorAwsSqsDlqClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(caseCreatorDlqAccessKeyId, caseCreatorDlqSecretKey)
     return AmazonSQSAsyncClientBuilder
@@ -129,6 +139,7 @@ class AwsConfiguration(
   }
 
   @Bean(name = ["migrationAwsSqsClient"])
+  @ConditionalOnProperty(prefix = "migration-queue", name = ["sqs-queue"])
   fun migrationAwsSqsClient(): AmazonSQSAsync {
     val credentials: AWSCredentials = BasicAWSCredentials(migrationAccessKeyId, migrationSecretKey)
     return AmazonSQSAsyncClientBuilder
