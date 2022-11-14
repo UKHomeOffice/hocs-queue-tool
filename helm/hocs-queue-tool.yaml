@@ -4,3 +4,21 @@ hocs-generic-service:
   deployment:
     annotations:
       downscaler/downtime: "Mon-Sun 00:00-07:55 Europe/London,Mon-Sun 18:05-24:00 Europe/London"
+
+  truststore:
+    resources:
+      requests:
+        cpu: 50m
+
+  app:
+    env:
+      queues:
+        - 'audit'
+        - 'case-creator'
+        - 'document'
+        - 'notify'
+        - 'search'
+        - 'case-migrator'
+    resources:
+      requests:
+        cpu: 50m
