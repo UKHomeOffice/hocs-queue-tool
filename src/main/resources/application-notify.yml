@@ -1,0 +1,9 @@
+notify-queue:
+  sqs-queue: ${notify.queue:false}
+  access-key-id: ${notify.queue.access.key.id:UNSET}
+  secret-access-key: ${notify.queue.secret.access.key:UNSET}
+
+notify-dlq:
+  sqs-queue: ${notify.dlq.queue:false}
+  access-key-id: ${notify.dlq.access.key.id:UNSET}
+  secret-access-key: ${notify.dlq.secret.access.key:UNSET}

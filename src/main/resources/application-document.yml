@@ -1,0 +1,9 @@
+document-queue:
+  sqs-queue: ${document.queue:false}
+  access-key-id: ${document.queue.access.key.id:UNSET}
+  secret-access-key: ${document.queue.secret.access.key:UNSET}
+
+document-dlq:
+  sqs-queue: ${document.dlq.queue:false}
+  access-key-id: ${document.dlq.access.key.id:UNSET}
+  secret-access-key: ${document.dlq.secret.access.key:UNSET}

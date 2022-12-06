@@ -16,3 +16,5 @@ management:
       enabled: true
       probes:
         enabled: true
+
+sqs-region: eu-west-2

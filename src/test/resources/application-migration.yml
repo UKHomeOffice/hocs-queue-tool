@@ -1,3 +1,0 @@
-migration-queue:
-  endpoint: http://localhost:4566
-  sqs-queue: http://localhost:4566/000000000000/migration-queue

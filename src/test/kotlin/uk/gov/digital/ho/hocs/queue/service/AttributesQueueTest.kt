@@ -32,7 +32,7 @@ class AttributesQueueTest : BaseQueueHelper() {
   }
 
   @ParameterizedTest
-  @MethodSource("getQueuePairs")
+  @MethodSource("getQueuePairsWithDlq")
   fun `view attributes of dlq`(queuePair : QueuePair, queuePairName : QueuePairName) {
     with (queuePair) {
       putMessageOnQueue(dlqClient!!, dlqEndpoint!!, 2)
@@ -62,7 +62,7 @@ class AttributesQueueTest : BaseQueueHelper() {
 
   @Test
   fun `throws exception with non-boolean dlq value`() {
-    webTestClient.get().uri("/attributes?queue=${QueuePairName.MIGRATION}&dlq=test")
+    webTestClient.get().uri("/attributes?queue=${QueuePairName.CASEMIGRATOR}&dlq=test")
       .exchange()
       .expectStatus()
       .is4xxClientError
@@ -70,7 +70,7 @@ class AttributesQueueTest : BaseQueueHelper() {
 
   @Test
   fun `throws exception for queue without DLQ`() {
-    webTestClient.get().uri("/attributes?queue=${QueuePairName.MIGRATION}&dlq=true")
+    webTestClient.get().uri("/attributes?queue=${QueuePairName.CASEMIGRATOR}&dlq=true")
       .exchange()
       .expectStatus()
       .is5xxServerError

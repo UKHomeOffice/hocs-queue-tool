@@ -19,94 +19,37 @@ import java.util.stream.Stream
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles(profiles = ["localstack", "migration"])
+@ActiveProfiles(profiles = ["localstack"])
 abstract class BaseQueueHelper {
 
   @Autowired
-  internal lateinit var searchAwsSqsClient: AmazonSQSAsync
-
-  @Autowired
-  internal lateinit var searchAwsSqsDlqClient: AmazonSQSAsync
-
-  @Autowired
-  internal lateinit var auditAwsSqsClient: AmazonSQSAsync
-
-  @Autowired
-  internal lateinit var auditAwsSqsDlqClient: AmazonSQSAsync
-
-  @Autowired
-  internal lateinit var documentAwsSqsClient: AmazonSQSAsync
-
-  @Autowired
-  internal lateinit var documentAwsSqsDlqClient: AmazonSQSAsync
-
-  @Autowired
-  internal lateinit var notifyAwsSqsClient: AmazonSQSAsync
-
-  @Autowired
-  internal lateinit var notifyAwsSqsDlqClient: AmazonSQSAsync
-
-  @Autowired
-  internal lateinit var caseCreatorAwsSqsClient: AmazonSQSAsync
-
-  @Autowired
-  internal lateinit var caseCreatorAwsSqsDlqClient: AmazonSQSAsync
+  internal lateinit var queueClients: List<Pair<QueuePairName, QueuePair>>
 
   @Autowired
   lateinit var webTestClient: WebTestClient
 
-  @Value("\${search-queue.sqs-queue}")
-  lateinit var searchQueueUrl: String
-
-  @Value("\${search-dlq.sqs-queue}")
-  lateinit var searchDlqUrl: String
-
-  @Value("\${audit-queue.sqs-queue}")
-  lateinit var auditQueueUrl: String
-
-  @Value("\${audit-dlq.sqs-queue}")
-  lateinit var auditDlqUrl: String
-
-  @Value("\${document-queue.sqs-queue}")
-  lateinit var documentQueueUrl: String
-
-  @Value("\${document-dlq.sqs-queue}")
-  lateinit var documentDlqUrl: String
-
-  @Value("\${notify-queue.sqs-queue}")
-  lateinit var notifyQueueUrl: String
-
-  @Value("\${notify-dlq.sqs-queue}")
-  lateinit var notifyDlqUrl: String
-
-  @Value("\${case-creator-queue.sqs-queue}")
-  lateinit var caseCreatorQueueUrl: String
-
-  @Value("\${case-creator-dlq.sqs-queue}")
-  lateinit var caseCreatorDlqUrl: String
-
   @BeforeEach
   fun `purge Queues`() {
-    searchAwsSqsClient.purgeQueue(PurgeQueueRequest(searchQueueUrl))
-    searchAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(searchDlqUrl))
-    auditAwsSqsClient.purgeQueue(PurgeQueueRequest(auditQueueUrl))
-    auditAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(auditDlqUrl))
-    documentAwsSqsClient.purgeQueue(PurgeQueueRequest(documentQueueUrl))
-    documentAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(documentDlqUrl))
-    notifyAwsSqsClient.purgeQueue(PurgeQueueRequest(notifyQueueUrl))
-    notifyAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(notifyDlqUrl))
-    caseCreatorAwsSqsClient.purgeQueue(PurgeQueueRequest(caseCreatorQueueUrl))
-    caseCreatorAwsSqsDlqClient.purgeQueue(PurgeQueueRequest(caseCreatorDlqUrl))
+    queueClients.forEach {
+      val queuePair = it.second;
+
+      queuePair.mainClient?.purgeQueue(PurgeQueueRequest(queuePair.mainEndpoint))
+      queuePair.dlqClient?.purgeQueue(PurgeQueueRequest(queuePair.dlqEndpoint))
+    }
+  }
+
+  fun getQueuePairsWithDlq() : Stream<Arguments> {
+    return queueClients
+      .filterNot { it.second.dlqClient == null }
+      .map {
+        Arguments.of(it.second, it.first)
+    }.stream()
   }
 
   fun getQueuePairs() : Stream<Arguments> {
-    return Stream.of(
-      Arguments.of(QueuePair(searchAwsSqsClient, searchQueueUrl, searchAwsSqsDlqClient, searchDlqUrl), QueuePairName.SEARCH),
-      Arguments.of(QueuePair(auditAwsSqsClient, auditQueueUrl, auditAwsSqsDlqClient, auditDlqUrl),  QueuePairName.AUDIT),
-      Arguments.of(QueuePair(documentAwsSqsClient, documentQueueUrl, documentAwsSqsDlqClient, documentDlqUrl), QueuePairName.DOCUMENT),
-      Arguments.of(QueuePair(notifyAwsSqsClient, notifyQueueUrl, notifyAwsSqsDlqClient, notifyDlqUrl), QueuePairName.NOTIFY),
-      Arguments.of(QueuePair(caseCreatorAwsSqsClient, caseCreatorQueueUrl, caseCreatorAwsSqsDlqClient, caseCreatorDlqUrl), QueuePairName.CASECREATOR),
-    )
+    return queueClients.map {
+      Arguments.of(it.second, it.first)
+    }.stream()
   }
 
   fun putMessageOnQueue(queueClient: AmazonSQSAsync, queueUrl: String, msgNumber : Int) {

@@ -1,9 +1,7 @@
 package uk.gov.digital.ho.hocs.queue.config.helpers
 
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.assertDoesNotThrow
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -25,18 +23,18 @@ class QueueHelperTest {
 
     @ParameterizedTest
     @MethodSource("getQueuePairNames")
-    fun `all queues are valid`(queuePair : QueuePairName) {
+    fun `all queues are valid`(queuePair: QueuePairName) {
         assertDoesNotThrow { queueHelper.getQueuePair(queuePair) }
     }
 
-    fun getQueuePairNames() : Stream<Arguments> {
+    fun getQueuePairNames(): Stream<Arguments> {
         return Stream.of(
-            Arguments.of(QueuePairName.SEARCH),
             Arguments.of(QueuePairName.AUDIT),
+            Arguments.of(QueuePairName.CASECREATOR),
+            Arguments.of(QueuePairName.CASEMIGRATOR),
             Arguments.of(QueuePairName.DOCUMENT),
             Arguments.of(QueuePairName.NOTIFY),
-            Arguments.of(QueuePairName.CASECREATOR),
-            Arguments.of(QueuePairName.MIGRATION)
+            Arguments.of(QueuePairName.SEARCH)
         )
     }
 

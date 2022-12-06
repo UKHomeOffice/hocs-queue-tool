@@ -13,7 +13,7 @@ import uk.gov.digital.ho.hocs.queue.domain.enum.QueuePairName
 class PurgeQueueTest : BaseQueueHelper() {
 
   @ParameterizedTest
-  @MethodSource("getQueuePairs")
+  @MethodSource("getQueuePairsWithDlq")
   fun `purge 0 message from DLQ`(queuePair : QueuePair, queuePairName : QueuePairName) {
     with (queuePair) {
       putMessageOnQueue(dlqClient!!, dlqEndpoint!!,0)
@@ -26,7 +26,7 @@ class PurgeQueueTest : BaseQueueHelper() {
   }
 
   @ParameterizedTest
-  @MethodSource("getQueuePairs")
+  @MethodSource("getQueuePairsWithDlq")
   fun `purge 1 message from DLQ`(queuePair : QueuePair, queuePairName : QueuePairName) {
     with (queuePair) {
       putMessageOnQueue(dlqClient!!, dlqEndpoint!!,1)
@@ -39,7 +39,7 @@ class PurgeQueueTest : BaseQueueHelper() {
   }
 
   @ParameterizedTest
-  @MethodSource("getQueuePairs")
+  @MethodSource("getQueuePairsWithDlq")
   fun `purge 2 messages from DLQ to main queue`(queuePair : QueuePair, queuePairName : QueuePairName) {
     with (queuePair) {
       putMessageOnQueue(dlqClient!!, dlqEndpoint!!,2)
@@ -62,7 +62,7 @@ class PurgeQueueTest : BaseQueueHelper() {
 
   @Test
   fun `throws exception for queue without DLQ`() {
-    webTestClient.get().uri("/printdlq?queue=MIGRATION")
+    webTestClient.get().uri("/printdlq?queue=${QueuePairName.CASEMIGRATOR}")
       .exchange()
       .expectStatus()
       .is5xxServerError

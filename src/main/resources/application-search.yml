@@ -1,0 +1,9 @@
+search-queue:
+  sqs-queue: ${search.queue:false}
+  access-key-id: ${search.queue.access.key.id:UNSET}
+  secret-access-key: ${search.queue.secret.access.key:UNSET}
+
+search-dlq:
+  sqs-queue: ${search.dlq.queue:false}
+  access-key-id: ${search.dlq.access.key.id:UNSET}
+  secret-access-key: ${search.dlq.secret.access.key:UNSET}

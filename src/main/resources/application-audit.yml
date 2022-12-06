@@ -1,0 +1,9 @@
+audit-queue:
+  sqs-queue: ${audit.queue:false}
+  access-key-id: ${audit.queue.access.key.id:UNSET}
+  secret-access-key: ${audit.queue.secret.access.key:UNSET}
+
+audit-dlq:
+  sqs-queue: ${audit.dlq.queue:false}
+  access-key-id: ${audit.dlq.access.key.id:UNSET}
+  secret-access-key: ${audit.dlq.secret.access.key:UNSET}
