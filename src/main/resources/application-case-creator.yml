@@ -1,0 +1,9 @@
+case-creator-queue:
+  sqs-queue: ${case.creator.queue:false}
+  access-key-id: ${case.creator.queue.access.key.id:UNSET}
+  secret-access-key: ${case.creator.queue.secret.access.key:UNSET}
+
+case-creator-dlq:
+  sqs-queue: ${case.creator.dlq.queue:false}
+  access-key-id: ${case.creator.dlq.access.key.id:UNSET}
+  secret-access-key: ${case.creator.dlq.secret.access.key:UNSET}

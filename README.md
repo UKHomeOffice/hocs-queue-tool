@@ -67,7 +67,7 @@ kubectl port-forward deployment/hocs-queue-tool 10443:10443 -n <<NAMESPACE>>
 ## Queue Management Endpoints
 
 All endpoints take `?queue` as a required parameter.
-The valid values are `SEARCH, AUDIT, NOTIFY, DOCUMENT, CASECREATOR, MIGRATION`.
+The valid values are `AUDIT, CASECREATOR, CASEMIGRATOR, DOCUMENT, NOTIFY, SEARCH`.
 
 ### Transfer
 `GET /transfer?queue=<<QUEUE>>`

@@ -1,0 +1,4 @@
+migration-queue:
+  sqs-queue: ${migration.queue:false}
+  access-key-id: ${migration.queue.access.key.id:UNSET}
+  secret-access-key: ${migration.queue.secret.access.key:UNSET}

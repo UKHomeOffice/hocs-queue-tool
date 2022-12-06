@@ -6,146 +6,134 @@ import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.services.sqs.AmazonSQSAsync
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
+import uk.gov.digital.ho.hocs.queue.domain.QueuePair
+import uk.gov.digital.ho.hocs.queue.domain.enum.QueuePairName
 
 @Configuration
-@ConditionalOnProperty(name = ["sqs-provider"], havingValue = "aws")
+@Profile(
+    value = [
+        "audit", "case-creator", "case-migrator",
+        "document", "notify", "search"
+    ]
+)
 class AwsConfiguration(
-  @Value("\${search-queue.access-key-id}") val searchAccessKeyId: String,
-  @Value("\${search-queue.secret-access-key}") val searchSecretKey: String,
-  @Value("\${search-dlq.access-key-id}") val searchDlqAccessKeyId: String,
-  @Value("\${search-dlq.secret-access-key}") val searchDlqSecretKey: String,
-  @Value("\${audit-queue.access-key-id}") val auditAccessKeyId: String,
-  @Value("\${audit-queue.secret-access-key}") val auditSecretKey: String,
-  @Value("\${audit-dlq.access-key-id}") val auditDlqAccessKeyId: String,
-  @Value("\${audit-dlq.secret-access-key}") val auditDlqSecretKey: String,
-  @Value("\${document-queue.access-key-id}") val documentAccessKeyId: String,
-  @Value("\${document-queue.secret-access-key}") val documentSecretKey: String,
-  @Value("\${document-dlq.access-key-id}") val documentDlqAccessKeyId: String,
-  @Value("\${document-dlq.secret-access-key}") val documentDlqSecretKey: String,
-  @Value("\${notify-queue.access-key-id}") val notifyAccessKeyId: String,
-  @Value("\${notify-queue.secret-access-key}") val notifySecretKey: String,
-  @Value("\${notify-dlq.access-key-id}") val notifyDlqAccessKeyId: String,
-  @Value("\${notify-dlq.secret-access-key}") val notifyDlqSecretKey: String,
-  @Value("\${case-creator-queue.access-key-id}") val caseCreatorAccessKeyId: String,
-  @Value("\${case-creator-queue.secret-access-key}") val caseCreatorSecretKey: String,
-  @Value("\${case-creator-dlq.access-key-id}") val caseCreatorDlqAccessKeyId: String,
-  @Value("\${case-creator-dlq.secret-access-key}") val caseCreatorDlqSecretKey: String,
-  @Value("\${migration-queue.access-key-id}") val migrationAccessKeyId: String,
-  @Value("\${migration-queue.secret-access-key}") val migrationSecretKey: String,
-  @Value("\${sqs-region}") val region: String
+    @Value("\${sqs-region}") val region: String
 ) {
 
-  @Bean(name = ["searchAwsSqsClient"])
-  @ConditionalOnProperty(prefix = "search-queue", name = ["sqs-queue"])
-  fun searchAwsSqsClient(): AmazonSQSAsync {
-    val credentials: AWSCredentials = BasicAWSCredentials(searchAccessKeyId, searchSecretKey)
-    return AmazonSQSAsyncClientBuilder
-      .standard()
-      .withRegion(region)
-      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
-  }
+    @Bean
+    @Profile("audit")
+    fun auditAwsSqsClient(
+        @Value("\${audit-queue.access-key-id}") auditAccessKey: String,
+        @Value("\${audit-queue.secret-access-key}") auditSecretKey: String,
+        @Value("\${audit-dlq.access-key-id}") auditDlqAccessKey: String,
+        @Value("\${audit-dlq.secret-access-key}") auditDlqSecretKey: String,
+        @Value("\${audit-queue.sqs-queue}") auditQueueUrl: String,
+        @Value("\${audit-dlq.sqs-queue}") auditDlqUrl: String
+    ): Pair<QueuePairName, QueuePair> {
+        return Pair(
+            QueuePairName.AUDIT, QueuePair(
+                createClient(auditAccessKey, auditSecretKey), auditQueueUrl,
+                createClient(auditDlqAccessKey, auditDlqSecretKey), auditDlqUrl
+            )
+        )
+    }
 
-  @Bean(name = ["searchAwsSqsDlqClient"])
-  @ConditionalOnProperty(prefix = "search-dlq", name = ["sqs-queue"])
-  fun searchAwsSqsDlqClient(): AmazonSQSAsync {
-    val credentials: AWSCredentials = BasicAWSCredentials(searchDlqAccessKeyId, searchDlqSecretKey)
-    return AmazonSQSAsyncClientBuilder
-      .standard()
-      .withRegion(region)
-      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
-  }
+    @Bean
+    @Profile("case-creator")
+    fun caseCreatorAwsSqsClient(
+        @Value("\${case-creator-queue.access-key-id}") caseCreatorAccessKey: String,
+        @Value("\${case-creator-queue.secret-access-key}") caseCreatorSecretKey: String,
+        @Value("\${case-creator-dlq.access-key-id}") caseCreatorDlqAccessKey: String,
+        @Value("\${case-creator-dlq.secret-access-key}") caseCreatorDlqSecretKey: String,
+        @Value("\${case-creator-queue.sqs-queue}") caseCreatorQueueUrl: String,
+        @Value("\${case-creator-dlq.sqs-queue}") caseCreatorDlqUrl: String
+    ): Pair<QueuePairName, QueuePair> {
+        return Pair(
+            QueuePairName.CASECREATOR, QueuePair(
+                createClient(caseCreatorAccessKey, caseCreatorSecretKey), caseCreatorQueueUrl,
+                createClient(caseCreatorDlqAccessKey, caseCreatorDlqSecretKey), caseCreatorDlqUrl
+            )
+        )
+    }
 
-  @Bean(name = ["auditAwsSqsClient"])
-  @ConditionalOnProperty(prefix = "audit-queue", name = ["sqs-queue"])
-  fun auditAwsSqsClient(): AmazonSQSAsync {
-    val credentials: AWSCredentials = BasicAWSCredentials(auditAccessKeyId, auditSecretKey)
-    return AmazonSQSAsyncClientBuilder
-      .standard()
-      .withRegion(region)
-      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
-  }
+    @Bean
+    @Profile("case-migrator")
+    fun migrationAwsSqsClient(
+        @Value("\${migration-queue.access-key-id}") migrationAccessKey: String,
+        @Value("\${migration-queue.secret-access-key}") migrationSecretKey: String,
+        @Value("\${migration-queue.sqs-queue}") migrationQueueUrl: String
+    ): Pair<QueuePairName, QueuePair> {
+        return Pair(
+            QueuePairName.CASEMIGRATOR, QueuePair(
+                createClient(migrationAccessKey, migrationSecretKey), migrationQueueUrl,
+                null, null
+            )
+        )
+    }
 
-  @Bean(name = ["auditAwsSqsDlqClient"])
-  @ConditionalOnProperty(prefix = "audit-dlq", name = ["sqs-queue"])
-  fun auditAwsSqsDlqClient(): AmazonSQSAsync {
-    val credentials: AWSCredentials = BasicAWSCredentials(auditDlqAccessKeyId, auditDlqSecretKey)
-    return AmazonSQSAsyncClientBuilder
-      .standard()
-      .withRegion(region)
-      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
-  }
+    @Bean
+    @Profile("document")
+    fun documentAwsSqsClient(
+        @Value("\${document-queue.access-key-id}") documentAccessKey: String,
+        @Value("\${document-queue.secret-access-key}") documentSecretKey: String,
+        @Value("\${document-dlq.access-key-id}") documentDlqAccessKey: String,
+        @Value("\${document-dlq.secret-access-key}") documentDlqSecretKey: String,
+        @Value("\${document-queue.sqs-queue}") documentQueueUrl: String,
+        @Value("\${document-dlq.sqs-queue}") documentDlqUrl: String
+    ): Pair<QueuePairName, QueuePair> {
+        return Pair(
+            QueuePairName.DOCUMENT, QueuePair(
+                createClient(documentAccessKey, documentSecretKey), documentQueueUrl,
+                createClient(documentDlqAccessKey, documentDlqSecretKey), documentDlqUrl
+            )
+        )
+    }
 
-  @Bean(name = ["documentAwsSqsClient"])
-  @ConditionalOnProperty(prefix = "document-queue", name = ["sqs-queue"])
-  fun documentAwsSqsClient(): AmazonSQSAsync {
-    val credentials: AWSCredentials = BasicAWSCredentials(documentAccessKeyId, documentSecretKey)
-    return AmazonSQSAsyncClientBuilder
-      .standard()
-      .withRegion(region)
-      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
-  }
+    @Bean
+    @Profile("notify")
+    fun notifyAwsSqsClient(
+        @Value("\${notify-queue.access-key-id}") notifyAccessKey: String,
+        @Value("\${notify-queue.secret-access-key}") notifySecretKey: String,
+        @Value("\${notify-dlq.access-key-id}") notifyDlqAccessKey: String,
+        @Value("\${notify-dlq.secret-access-key}") notifyDlqSecretKey: String,
+        @Value("\${notify-queue.sqs-queue}") notifyQueueUrl: String,
+        @Value("\${notify-dlq.sqs-queue}") notifyDlqUrl: String
+    ): Pair<QueuePairName, QueuePair> {
+        return Pair(
+            QueuePairName.NOTIFY, QueuePair(
+                createClient(notifyAccessKey, notifySecretKey), notifyQueueUrl,
+                createClient(notifyDlqAccessKey, notifyDlqSecretKey), notifyDlqUrl
+            )
+        )
+    }
 
-  @Bean(name = ["documentAwsSqsDlqClient"])
-  @ConditionalOnProperty(prefix = "document-dlq", name = ["sqs-queue"])
-  fun documentAwsSqsDlqClient(): AmazonSQSAsync {
-    val credentials: AWSCredentials = BasicAWSCredentials(documentDlqAccessKeyId, documentDlqSecretKey)
-    return AmazonSQSAsyncClientBuilder
-      .standard()
-      .withRegion(region)
-      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
-  }
+    @Bean
+    @Profile("search")
+    fun searchAwsSqsClient(
+        @Value("\${search-queue.access-key-id}") searchAccessKey: String,
+        @Value("\${search-queue.secret-access-key}") searchSecretKey: String,
+        @Value("\${search-dlq.access-key-id}") searchDlqAccessKey: String,
+        @Value("\${search-dlq.secret-access-key}") searchDlqSecretKey: String,
+        @Value("\${search-queue.sqs-queue}") searchQueueUrl: String,
+        @Value("\${search-dlq.sqs-queue}") searchDlqUrl: String
+    ): Pair<QueuePairName, QueuePair> {
+        return Pair(
+            QueuePairName.SEARCH, QueuePair(
+                createClient(searchAccessKey, searchSecretKey), searchQueueUrl,
+                createClient(searchDlqAccessKey, searchDlqSecretKey), searchDlqUrl
+            )
+        )
+    }
 
-  @Bean(name = ["notifyAwsSqsClient"])
-  @ConditionalOnProperty(prefix = "notify-queue", name = ["sqs-queue"])
-  fun notifyAwsSqsClient(): AmazonSQSAsync {
-    val credentials: AWSCredentials = BasicAWSCredentials(notifyAccessKeyId, notifySecretKey)
-    return AmazonSQSAsyncClientBuilder
-      .standard()
-      .withRegion(region)
-      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
-  }
-
-  @Bean(name = ["notifyAwsSqsDlqClient"])
-  @ConditionalOnProperty(prefix = "notify-dlq", name = ["sqs-queue"])
-  fun notifyAwsSqsDlqClient(): AmazonSQSAsync {
-    val credentials: AWSCredentials = BasicAWSCredentials(notifyDlqAccessKeyId, notifyDlqSecretKey)
-    return AmazonSQSAsyncClientBuilder
-      .standard()
-      .withRegion(region)
-      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
-  }
-
-  @Bean(name = ["caseCreatorAwsSqsClient"])
-  @ConditionalOnProperty(prefix = "case-creator-queue", name = ["sqs-queue"])
-  fun caseCreatorAwsSqsClient(): AmazonSQSAsync {
-    val credentials: AWSCredentials = BasicAWSCredentials(caseCreatorAccessKeyId, caseCreatorSecretKey)
-    return AmazonSQSAsyncClientBuilder
-      .standard()
-      .withRegion(region)
-      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
-  }
-
-  @Bean(name = ["caseCreatorAwsSqsDlqClient"])
-  @ConditionalOnProperty(prefix = "case-creator-dlq", name = ["sqs-queue"])
-  fun caseCreatorAwsSqsDlqClient(): AmazonSQSAsync {
-    val credentials: AWSCredentials = BasicAWSCredentials(caseCreatorDlqAccessKeyId, caseCreatorDlqSecretKey)
-    return AmazonSQSAsyncClientBuilder
-      .standard()
-      .withRegion(region)
-      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
-  }
-
-  @Bean(name = ["migrationAwsSqsClient"])
-  @ConditionalOnProperty(prefix = "migration-queue", name = ["sqs-queue"])
-  fun migrationAwsSqsClient(): AmazonSQSAsync {
-    val credentials: AWSCredentials = BasicAWSCredentials(migrationAccessKeyId, migrationSecretKey)
-    return AmazonSQSAsyncClientBuilder
-      .standard()
-      .withRegion(region)
-      .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
-  }
+    fun createClient(accessKey: String, secretKey: String): AmazonSQSAsync {
+        val credentials: AWSCredentials = BasicAWSCredentials(accessKey, secretKey)
+        return AmazonSQSAsyncClientBuilder
+            .standard()
+            .withRegion(region)
+            .withCredentials(AWSStaticCredentialsProvider(credentials)).build()
+    }
 
 }

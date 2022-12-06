@@ -15,10 +15,10 @@ hocs-generic-service:
       queues:
         - 'audit'
         - 'case-creator'
+        - 'case-migrator'
         - 'document'
         - 'notify'
         - 'search'
-        - 'case-migrator'
     resources:
       requests:
         cpu: 50m
