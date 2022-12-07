@@ -1,11 +1,3 @@
-search-queue:
-  endpoint: http://localhost:4566
-  sqs-queue: http://localhost:4566/000000000000/search-queue
-
-search-dlq:
-  endpoint: http://localhost:4566
-  sqs-queue: http://localhost:4566/000000000000/search-queue-dlq
-
 audit-queue:
   endpoint: http://localhost:4566
   sqs-queue: http://localhost:4566/000000000000/audit-queue
@@ -13,6 +5,14 @@ audit-queue:
 audit-dlq:
   endpoint: http://localhost:4566
   sqs-queue: http://localhost:4566/000000000000/audit-queue-dlq
+
+case-creator-queue:
+  endpoint: http://localhost:4566
+  sqs-queue: http://localhost:4566/000000000000/case-creator-queue
+
+case-creator-dlq:
+  endpoint: http://localhost:4566
+  sqs-queue: http://localhost:4566/000000000000/case-creator-queue-dlq
 
 document-queue:
   endpoint: http://localhost:4566
@@ -22,6 +22,10 @@ document-dlq:
   endpoint: http://localhost:4566
   sqs-queue: http://localhost:4566/000000000000/document-queue-dlq
 
+migration-queue:
+  endpoint: http://localhost:4566
+  sqs-queue: http://localhost:4566/000000000000/migration-queue
+
 notify-queue:
   endpoint: http://localhost:4566
   sqs-queue: http://localhost:4566/000000000000/notify-queue
@@ -30,14 +34,10 @@ notify-dlq:
   endpoint: http://localhost:4566
   sqs-queue: http://localhost:4566/000000000000/notify-queue-dlq
 
-case-creator-queue:
+search-queue:
   endpoint: http://localhost:4566
-  sqs-queue: http://localhost:4566/000000000000/ukvi-complaint-queue
+  sqs-queue: http://localhost:4566/000000000000/search-queue
 
-case-creator-dlq:
+search-dlq:
   endpoint: http://localhost:4566
-  sqs-queue: http://localhost:4566/000000000000/ukvi-complaint-queue-dlq
-
-migration-queue:
-  endpoint: http://localhost:4566
-  sqs-queue: http://localhost:4566/000000000000/migration-queue
+  sqs-queue: http://localhost:4566/000000000000/search-queue-dlq
