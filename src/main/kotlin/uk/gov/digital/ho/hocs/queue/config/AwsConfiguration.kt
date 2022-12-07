@@ -111,6 +111,24 @@ class AwsConfiguration(
     }
 
     @Bean
+    @Profile("opensearch")
+    fun opensearchAwsSqsClient(
+        @Value("\${opensearch-queue.access-key-id}") opensearchAccessKey: String,
+        @Value("\${opensearch-queue.secret-access-key}") opensearchSecretKey: String,
+        @Value("\${opensearch-dlq.access-key-id}") opensearchDlqAccessKey: String,
+        @Value("\${opensearch-dlq.secret-access-key}") opensearchDlqSecretKey: String,
+        @Value("\${opensearch-queue.sqs-queue}") opensearchQueueUrl: String,
+        @Value("\${opensearch-dlq.sqs-queue}") opensearchDlqUrl: String
+    ): Pair<QueuePairName, QueuePair> {
+        return Pair(
+            QueuePairName.OPENSEARCH, QueuePair(
+                createClient(opensearchAccessKey, opensearchSecretKey), opensearchQueueUrl,
+                createClient(opensearchDlqAccessKey, opensearchDlqSecretKey), opensearchDlqUrl
+            )
+        )
+    }
+
+    @Bean
     @Profile("search")
     fun searchAwsSqsClient(
         @Value("\${search-queue.access-key-id}") searchAccessKey: String,

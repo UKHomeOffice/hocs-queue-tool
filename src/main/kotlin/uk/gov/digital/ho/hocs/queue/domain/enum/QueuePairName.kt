@@ -6,5 +6,6 @@ enum class QueuePairName{
   CASEMIGRATOR,
   DOCUMENT,
   NOTIFY,
+  OPENSEARCH,
   SEARCH,
 }
