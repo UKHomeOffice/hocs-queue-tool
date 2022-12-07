@@ -80,12 +80,12 @@ curl http://localhost:10443/transfer?queue=AUDIT
 
 ### Purge
 
-`GET /purgedlq?queue=<<QUEUE>>`
+`GET /purge?queue=<<QUEUE>>&dlq=<<BOOL>>`
 
-Deletes all messages on the dead letter queue. To be used when the message can never be processed successfully.
+Deletes all messages from the specified queue.
 
 ```sh
-curl http://localhost:10443/purgedlq?queue=AUDIT
+curl http://localhost:10443/purge?queue=AUDIT&dlq=true 
 ```
 
 ### Print
