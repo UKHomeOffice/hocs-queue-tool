@@ -38,17 +38,22 @@ class QueueAdminService(
         }
     }
 
-    /* Remove messages from the DLQ */
-    fun purgeMessages(name: QueuePairName) {
+    /* Remove messages from either the queue or DLQ */
+    fun purgeMessages(name: QueuePairName, dlq: Boolean) {
         with (queueHelper.getQueuePair(name)) {
-            if (mainClient == null || mainEndpoint == null) {
-                throw IllegalArgumentException("No Main setup for queue $name")
+            if (dlq) {
+                if (dlqClient == null || dlqEndpoint == null) {
+                    throw IllegalArgumentException("No DLQ setup for queue $name")
+                }
+                dlqClient.purgeQueue(PurgeQueueRequest(dlqEndpoint)).also {
+                    log.info("Purged the dead letter queue for $name") }
+            } else {
+                if (mainClient == null || mainEndpoint == null) {
+                    throw IllegalArgumentException("No main setup for queue $name")
+                }
+                mainClient.purgeQueue(PurgeQueueRequest(mainEndpoint)).also {
+                    log.info("Purged the main queue for $name") }
             }
-            if (dlqClient == null || dlqEndpoint == null) {
-                throw IllegalArgumentException("No DLQ setup for queue $name")
-            }
-
-            dlqClient.purgeQueue(PurgeQueueRequest(dlqEndpoint)).also { log.info("Purged the dead letter queue") }
         }
     }
 

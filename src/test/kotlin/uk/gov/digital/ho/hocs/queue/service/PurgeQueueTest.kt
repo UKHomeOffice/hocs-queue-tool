@@ -12,60 +12,71 @@ import uk.gov.digital.ho.hocs.queue.domain.enum.QueuePairName
 
 class PurgeQueueTest : BaseQueueHelper() {
 
-  @ParameterizedTest
-  @MethodSource("getQueuePairsWithDlq")
-  fun `purge 0 message from DLQ`(queuePair : QueuePair, queuePairName : QueuePairName) {
-    with (queuePair) {
-      putMessageOnQueue(dlqClient!!, dlqEndpoint!!,0)
-      webTestClient.get().uri("/purgedlq?queue=$queuePairName")
-        .exchange()
-        .expectStatus()
-        .isOk
-      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
+    @ParameterizedTest
+    @MethodSource("getQueuePairs")
+    fun `purge 0 messages from main queue`(queuePair: QueuePair, queuePairName: QueuePairName) {
+        with(queuePair) {
+            webTestClient.get().uri("/purge?queue=$queuePairName&dlq=${false}")
+                .exchange()
+                .expectStatus()
+                .isOk
+            await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient!!, mainEndpoint!!) } matches { it == 0 }
+        }
     }
-  }
 
-  @ParameterizedTest
-  @MethodSource("getQueuePairsWithDlq")
-  fun `purge 1 message from DLQ`(queuePair : QueuePair, queuePairName : QueuePairName) {
-    with (queuePair) {
-      putMessageOnQueue(dlqClient!!, dlqEndpoint!!,1)
-      webTestClient.get().uri("/purgedlq?queue=$queuePairName")
-        .exchange()
-        .expectStatus()
-        .isOk
-      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
+    @ParameterizedTest
+    @MethodSource("getQueuePairsWithDlq")
+    fun `purge 0 message from DLQ`(queuePair: QueuePair, queuePairName: QueuePairName) {
+        with(queuePair) {
+            webTestClient.get().uri("/purge?queue=$queuePairName&dlq=${true}")
+                .exchange()
+                .expectStatus()
+                .isOk
+            await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
+        }
     }
-  }
 
-  @ParameterizedTest
-  @MethodSource("getQueuePairsWithDlq")
-  fun `purge 2 messages from DLQ to main queue`(queuePair : QueuePair, queuePairName : QueuePairName) {
-    with (queuePair) {
-      putMessageOnQueue(dlqClient!!, dlqEndpoint!!,2)
-      webTestClient.get().uri("/purgedlq?queue=$queuePairName")
-        .exchange()
-        .expectStatus()
-        .isOk
-      await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
+    @ParameterizedTest
+    @MethodSource("getQueuePairs")
+    fun `purge 1 messages from main queue`(queuePair: QueuePair, queuePairName: QueuePairName) {
+        with(queuePair) {
+            putMessageOnQueue(mainClient!!, mainEndpoint!!, 1)
+            webTestClient.get().uri("/purge?queue=$queuePairName&dlq=${false}")
+                .exchange()
+                .expectStatus()
+                .isOk
+            await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(mainClient!!, mainEndpoint!!) } matches { it == 0 }
+        }
     }
-  }
 
-  @ParameterizedTest
-  @ValueSource(strings = ["","?","?queue=","?queue=search","?queue=SAUSAGES"])
-  fun `throws an exception if no valid queue pair is referenced`(queryString : String){
-      webTestClient.get().uri("/purgedlq$queryString")
-        .exchange()
-        .expectStatus()
-        .is4xxClientError
-  }
+    @ParameterizedTest
+    @MethodSource("getQueuePairsWithDlq")
+    fun `purge 1 message from DLQ`(queuePair: QueuePair, queuePairName: QueuePairName) {
+        with(queuePair) {
+            putMessageOnQueue(dlqClient!!, dlqEndpoint!!, 1)
+            webTestClient.get().uri("/purge?queue=$queuePairName&dlq=${true}")
+                .exchange()
+                .expectStatus()
+                .isOk
+            await untilCallTo { getNumberOfMessagesCurrentlyOnQueue(dlqClient!!, dlqEndpoint!!) } matches { it == 0 }
+        }
+    }
 
-  @Test
-  fun `throws exception for queue without DLQ`() {
-    webTestClient.get().uri("/printdlq?queue=${QueuePairName.CASEMIGRATOR}")
-      .exchange()
-      .expectStatus()
-      .is5xxServerError
-  }
+    @ParameterizedTest
+    @ValueSource(strings = ["", "?", "?queue=", "?queue=search", "?queue=SAUSAGES"])
+    fun `throws an exception if no valid queue pair is referenced`(queryString: String) {
+        webTestClient.get().uri("/purge$queryString&dlq=${false}")
+            .exchange()
+            .expectStatus()
+            .is4xxClientError
+    }
+
+    @Test
+    fun `throws exception for request without dlq param`() {
+        webTestClient.get().uri("/purge?queue=${QueuePairName.CASEMIGRATOR}")
+            .exchange()
+            .expectStatus()
+            .is4xxClientError
+    }
 
 }
