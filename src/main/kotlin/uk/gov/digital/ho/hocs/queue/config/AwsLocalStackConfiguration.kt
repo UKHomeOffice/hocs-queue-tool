@@ -92,6 +92,21 @@ class AwsLocalStackConfiguration(
     }
 
     @Bean
+    fun opensearchAwsSqsClient(
+        @Value("\${opensearch-queue.endpoint}") opensearchEndpoint: String,
+        @Value("\${opensearch-dlq.endpoint}") opensearchDlqEndpoint: String,
+        @Value("\${opensearch-queue.sqs-queue}") opensearchQueueUrl: String,
+        @Value("\${opensearch-dlq.sqs-queue}") opensearchDlqUrl: String
+    ): Pair<QueuePairName, QueuePair> {
+        return Pair(
+            QueuePairName.OPENSEARCH, QueuePair(
+                createClient(opensearchEndpoint), opensearchQueueUrl,
+                createClient(opensearchDlqEndpoint), opensearchDlqUrl
+            )
+        )
+    }
+
+    @Bean
     fun searchAwsSqsClient(
         @Value("\${search-queue.endpoint}") searchEndpoint: String,
         @Value("\${search-dlq.endpoint}") searchDlqEndpoint: String,

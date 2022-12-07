@@ -33,6 +33,13 @@ notify-queue:
 notify-dlq:
   endpoint: http://localhost:4566
   sqs-queue: http://localhost:4566/000000000000/notify-queue-dlq
+opensearch-queue:
+  endpoint: http://localhost:4566
+  sqs-queue: http://localhost:4566/000000000000/opensearch-queue
+
+opensearch-dlq:
+  endpoint: http://localhost:4566
+  sqs-queue: http://localhost:4566/000000000000/opensearch-queue-dlq
 
 search-queue:
   endpoint: http://localhost:4566
