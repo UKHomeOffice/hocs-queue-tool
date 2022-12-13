@@ -18,6 +18,7 @@ hocs-generic-service:
         - 'case-migrator'
         - 'document'
         - 'notify'
+        - 'opensearch'
         - 'search'
     resources:
       requests:
