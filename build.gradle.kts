@@ -22,7 +22,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("com.amazonaws:amazon-sqs-java-messaging-lib:1.1.0")
-	implementation("com.google.code.gson:gson:2.10")
+	implementation("com.google.code.gson:gson:2.10.1")
 
 	testAnnotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
