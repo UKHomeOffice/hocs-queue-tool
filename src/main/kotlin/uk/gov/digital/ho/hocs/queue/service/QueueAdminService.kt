@@ -72,10 +72,8 @@ class QueueAdminService(
             val msgCount = getMessageCount(dlqClient, dlqEndpoint)
             repeat(if (msgCount >0) num ?: msgCount else 0) {
                 dlqClient.receiveOneMessage(dlqEndpoint)?.let { msg ->
-                    log.info(msg.body)
                     messages.add(gson.fromJson(msg.body, HashMap::class.java).toString())
                 }
-
             }.also { log.info("Read messages from $name dead letter queue") }
         }
         return messages
