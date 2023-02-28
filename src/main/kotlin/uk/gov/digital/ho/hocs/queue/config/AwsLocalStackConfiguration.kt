@@ -1,7 +1,7 @@
 package uk.gov.digital.ho.hocs.queue.config
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider
-import com.amazonaws.auth.AnonymousAWSCredentials
+import com.amazonaws.auth.BasicAWSCredentials
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.sqs.AmazonSQSAsync
 import com.amazonaws.services.sqs.AmazonSQSAsyncClientBuilder
@@ -125,7 +125,8 @@ class AwsLocalStackConfiguration(
         return AmazonSQSAsyncClientBuilder
             .standard()
             .withEndpointConfiguration(AwsClientBuilder.EndpointConfiguration(endpoint, region))
-            .withCredentials(AWSStaticCredentialsProvider(AnonymousAWSCredentials())).build()
+            .withCredentials(AWSStaticCredentialsProvider(BasicAWSCredentials("test", "test")))
+            .build()
     }
 
 }
