@@ -9,7 +9,7 @@ A utility to investigate and manage dead letter queues on the hocs platform.
 
 ### Prerequisites
 
-* ```Kotlin 1.7```
+* ```Kotlin 1.8```
 * ```Docker```
 * ```LocalStack```
 
@@ -47,10 +47,17 @@ $ docker-compose -f ./ci/docker-compose.yml stop
 > Ensure you have the Kotlin Plugin installed within your IDE ([link](https://plugins.jetbrains.com/plugin/6954-kotlin)).
 
 If you are using an IDE, such as IntelliJ, this service can be started by running the ```QueueToolApplication``` main class.
-The service can then be accessed at ```http://localhost:8080```.
+The service can then be accessed at ```http://localhost:8094```.
 
 You need to specify appropriate Spring profiles.
 Paste `development,localstack` into the "Active profiles" box of your run configuration.
+
+> For curl commands:
+> - use `http` instead of `https` 
+> - use `8094` instead of `10443`
+> - remove the `-k` flag 
+> 
+> For example, `curl "http://localhost:8094/transfer?queue=AUDIT"`
 
 ## Running hocs-queue-tool in kubernetes
 
@@ -83,7 +90,7 @@ The valid values are:
 Moves all messages from the dead letter queue onto the main queue.
 
 ```sh
-curl http://localhost:10443/transfer?queue=AUDIT
+curl -k "https://localhost:10443/transfer?queue=AUDIT"
 ```
 
 ### Purge
@@ -93,17 +100,19 @@ curl http://localhost:10443/transfer?queue=AUDIT
 Deletes all messages from the specified queue.
 
 ```sh
-curl http://localhost:10443/purge?queue=AUDIT&dlq=true 
+curl -k "https://localhost:10443/purge?queue=AUDIT&dlq=true" 
 ```
 
 ### Print
 
 `GET /pringdlq?queue=<<QUEUE>>&count=<<NUM>>`
 
-Prints all, or `count` messages on the dead letter queue while still leaving them on the dead letter queue. To be used to inspect a small number of messages.
+Prints all, or `count` messages on the dead letter queue. To be used to inspect a small number of messages.
+
+> This marks the messages as not visible on the dead letter queue for the duration of the visibility timeout. 
 
 ```sh
-curl http://localhost:10443/printdlq?queue=AUDIT&count=1
+curl -k "https://localhost:10443/printdlq?queue=AUDIT&count=1"
 ```
 
 ### Send
@@ -113,7 +122,7 @@ curl http://localhost:10443/printdlq?queue=AUDIT&count=1
 Sends request body to the desired queue.
 
 ```sh
-curl http://localhost:10443/send?queue=AUDIT \
+curl -k "https://localhost:10443/send?queue=AUDIT" \
   -H "Content-Type: application/json" \
   -d '{ <<MESSAGE>> }'  
 ```
@@ -125,7 +134,7 @@ curl http://localhost:10443/send?queue=AUDIT \
 Returns the current attributes for the desired queue.
 
 ```sh
-curl http://localhost:10443/attributes?queue=AUDIT&dlq=true 
+curl -k "https://localhost:10443/attributes?queue=AUDIT&dlq=true"
 ```
 
 ## Versioning
